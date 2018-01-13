@@ -8,6 +8,12 @@
         #:optima)
   (:nicknames #:aops)
   (:shadow #:flatten)
+  (:export ; creation
+   #:zeros
+   #:ones
+   #:rand
+   #:randn
+   #:linspace)
   (:export ; utilities
    #:walk-subscripts
    #:walk-subscripts-list)

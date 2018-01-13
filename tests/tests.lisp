@@ -11,7 +11,31 @@
 (defun run (&optional interactive?)
   "Run all the tests for LLA."
   (run-suite 'tests :use-debugger interactive?))
-
+
+;;; creation
+
+(deftest zeros (tests)
+  (let ((result (aops:zeros 4)))
+    (assert-equalp '(simple-array single-float (4)) (type-of result))
+    (assert-equalp (aref result 1) (coerce 0.0 'single-float)))
+  (let ((result (aops:zeros '(2 2) :element-type 'integer)))
+    (assert-equalp '(2 2) (array-dimensions result))
+    (assert-equalp (aref result 1 1) (coerce 0 'integer))))
+
+(deftest ones (tests)
+  (let ((result (aops:ones 4)))
+    (assert-equalp '(simple-array single-float (4)) (type-of result))
+    (assert-equalp (aref result 1) (coerce 1.0 'single-float)))
+  (let ((result (aops:ones '(2 3 2) :element-type 'integer)))
+    (assert-equalp '(2 3 2) (array-dimensions result))
+    (assert-equalp (aref result 1 1 0) (coerce 1 'integer))))
+
+(deftest linspace (tests)
+  (assert-equalp #(0 1 2 3) (aops:linspace 0 3 4))
+  (assert-equalp #(0 1/2 1 3/2 2) (aops:linspace 1 3 5))
+  (assert-equalp #(0.0d0 2.0d0 4.0d0) (aops:linspace 0 4d0 3)))
+
+
 ;;; utilities
 
 (deftest walk-subscripts (tests)
@@ -175,7 +199,7 @@
                                           (aops:each (curry #'* v) c))
                                         a))
       (aops:outer #'* a c))))
-
+
 ;;; stack
 
 (deftest stack-rows (tests)

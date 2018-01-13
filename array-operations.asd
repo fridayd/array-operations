@@ -11,6 +11,7 @@
                #:optima)
   :pathname #P"src/"
   :components ((:file "package")
+               (:file "creation")
                (:file "utilities")
                (:file "general")
                (:file "displacement")

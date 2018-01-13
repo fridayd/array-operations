@@ -10,6 +10,13 @@ A version of this library is available from [[https://www.quicklisp.org/beta/][q
   (ql:quickload :array-operations)
 #+END_SRC
 
+To run the test suite (using clunit):
+
+#+BEGIN_SRC lisp
+  (ql:quickload :array-operations-tests)
+  (array-operations-tests:run)
+#+END_SRC
+
 * Introduction
 
 =array-operations= is a Common Lisp library that facilitates working with Common Lisp arrays using syntax and semantics that work well with the rest of the language.
