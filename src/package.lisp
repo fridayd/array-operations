@@ -10,10 +10,15 @@
   (:shadow #:flatten)
   (:export ; creation
    #:zeros
+   #:zeros*
    #:ones
+   #:ones*
    #:rand
+   #:rand*
    #:randn
-   #:linspace)
+   #:randn*
+   #:linspace
+   #:linspace*)
   (:export ; utilities
    #:walk-subscripts
    #:walk-subscripts-list)

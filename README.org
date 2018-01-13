@@ -1,5 +1,5 @@
 #+CAPTION: Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
-http://www.repostatus.org/badges/latest/wip.svg
+[[http://www.repostatus.org/badges/latest/wip.svg]]
 
 | This is an *alpha* release.  All the code works and unit tests are expected to run perfectly, but the operations are not optimized and the API change. |
 
@@ -131,6 +131,16 @@ instead of the longer form
 When the resulting element type cannot be inferred, functions that create and transform arrays are provided in pairs: one of these will allow you to specify the array-element-type of the result, while the other assumes it is =t=.  The former ends with a =*=, and the =element-type= is always its first argument.  I give examples for the versions without =*=, use the other when you are optimizing your code and you are sure you can constrain to a given element-type.
 
 *Element traversal order of these functions is unspecified*.  The reason for this is that the library may use parallel code in the future, so it is unsafe to rely on a particular element traversal order.
+
+The following functions all make a new array, taking the dimensions as input. The version ending in =*= also takes the array type as first argument
+
+| Function | Description                                                      |
+|----------+------------------------------------------------------------------|
+| zeros    | Filled with zeros                                                |
+| ones     | Filled with ones                                                 |
+| rand     | Filled with uniformly distrubuted random numbers between 0 and 1 |
+| randn    | Normally distributed with mean 0 and standard deviation 1        |
+| linspace | Evenly spaced numbers in given range [START STOP]                |
 
 =generate= (and =generate*=) allow you to generate arrays using functions.
 #+BEGIN_SRC lisp
