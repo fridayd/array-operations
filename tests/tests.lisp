@@ -273,6 +273,59 @@
 ;;                                         a))
 ;;       (aops:outer #'* a c))))
 
+
+(deftest vectorize! (tests)
+  (let ((a #2A((1 2) (3 4)))
+        (b (make-array '(2 2))))
+    (assert-equalp #2A((2 3) (4 5))
+      (aops:vectorize! b (a) (+ a 1))
+      "vectorize! return value")
+    (assert-equalp #2A((2 3) (4 5)) b
+                   "vectorize! modified first arg")
+    (assert-equalp #2A((1 2) (3 4)) a
+                   "vectorize! didn't modify operand"))
+
+  (let ((a #2A((1 2) (3 4)))
+        (b (make-array 4)))
+    (assert-condition error
+        (aops:vectorize! b (a) (+ a 1))
+      "Wrong result array shape"))
+  
+  (let ((a #(1 2 3))
+        (b #(4 5 6)))
+    (let ((c (make-array 3 :element-type 'integer)))
+      (assert-equalp #(9 12 15)
+          (aops:vectorize! c (a b) (+ a (* b 2)))
+        "vectorize! return value")
+      (assert-equalp #(9 12 15) c
+        "vectorize! modified first arg"))
+    (let ((c (make-array 4 :element-type 'integer)))
+      (assert-condition error
+          (aops:vectorize! c (a b) (+ a (* b 2)))
+        "Wrong result array shape"))))
+      
+
+(deftest vectorize* (tests)
+  (let ((a #2A((1 2) (3 4)))
+        (b (make-array '(2 2))))
+    (assert-equalp #2A((2 3) (4 5))
+                   (aops:vectorize* 'integer (a) (+ a 1))))
+  (let ((a #(1 2 3))
+        (b #(4 5 6)))
+    (assert-equalp #(9.0 12.0 15.0)
+                   (aops:vectorize* 'single-float (a b) (+ a (* b 2))))))
+
+(deftest vectorize (tests)
+  (let ((a #2A((1 2) (3 4)))
+        (b (make-array '(2 2))))
+    (assert-equalp #2A((2 3) (4 5))
+                   (aops:vectorize (a) (+ a 1))))
+  (let ((a #(1 2 3))
+        (b #(4 5 6)))
+    (assert-equalp #(9 12 15)
+                   (aops:vectorize (a b) (+ a (* b 2))))))
+
+
 ;;; stack
 
 (deftest stack-rows (tests)

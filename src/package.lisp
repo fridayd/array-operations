@@ -67,7 +67,10 @@
    #:margin
    #:recycle
    #:outer*
-   #:outer)
+   #:outer
+   #:vectorize!
+   #:vectorize*
+   #:vectorize)
   (:export ; stack
    #:copy-row-major-block
    #:stack-rows-copy
