@@ -8,22 +8,26 @@
 (defun zeros* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with zeros
    coerced to the specified type ELEMENT-TYPE."
-  (make-array dimensions :element-type element-type
+  (make-array (ensure-dimensions dimensions)
+              :element-type element-type
               :initial-element (coerce 0 element-type)))
 
 (defun zeros (dimensions)
   "Makes an array of shape DIMENSIONS and type T, filled with zeros"
-  (make-array dimensions :initial-element 0))
+  (make-array (ensure-dimensions dimensions)
+              :initial-element 0))
 
 (defun ones* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with ones
    coerced to the specified type ELEMENT-TYPE."
-  (make-array dimensions :element-type element-type
+  (make-array (ensure-dimensions dimensions)
+              :element-type element-type
               :initial-element (coerce 1 element-type)))
 
 (defun ones (dimensions)
   "Makes an array of shape DIMENSIONS and type T, filled with ones"
-  (make-array dimensions :initial-element 1))
+  (make-array (ensure-dimensions dimensions)
+              :initial-element 1))
 
 (defun rand* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with random numbers
@@ -38,7 +42,8 @@
    (e.g. cryptographic applications), then you should probably
    not use this function.
    "
-  (let* ((arr (make-array dimensions :element-type element-type))
+  (let* ((arr (make-array (ensure-dimensions dimensions)
+                          :element-type element-type))
          (size (array-total-size arr)))
     (dotimes (i size)
       (setf (row-major-aref arr i) (coerce (random 1.0) element-type)))
@@ -73,7 +78,8 @@
    (e.g. cryptographic applications), then you should probably
    not use this function.
    "
-  (let* ((arr (make-array dimensions :element-type element-type))
+  (let* ((arr (make-array (ensure-dimensions dimensions)
+                          :element-type element-type))
          (size (array-total-size arr)))
     (do ((i 0 (+ 2 i)))
         ((>= i (- size 1)))   
