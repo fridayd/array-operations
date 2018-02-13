@@ -38,7 +38,7 @@ The library defines the following short function names that are synomyms for Com
 | nrow             | /number of rows in matrix/    |
 | ncol             | /number of columns in matrix/ |
 
-The =array-operations= package has the nickname =ao=, so you can use, for example, =(ao:size my-array)= without =use='ing the package.
+The =array-operations= package has the nickname =aops=, so you can use, for example, =(aops:size my-array)= without =use='ing the package.
 
 ** Displaced arrays for fun and profit
 
