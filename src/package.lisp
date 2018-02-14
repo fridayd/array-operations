@@ -70,7 +70,8 @@
    #:outer
    #:vectorize!
    #:vectorize*
-   #:vectorize)
+   #:vectorize
+   #:vectorize-reduce)
   (:export ; stack
    #:copy-row-major-block
    #:stack-rows-copy

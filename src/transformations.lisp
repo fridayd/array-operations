@@ -325,4 +325,52 @@ as rank 0 arrays, following the usual semantics."
        -> #(9 12 15)
    "
     `(vectorize* t ,variables ,@body))
+
+
+;;; vectorize-reduce
+
+(defmacro vectorize-reduce (fn variables &body body)
+  "Performs a reduction using FN over all elements in a vectorized expression
+   on array VARIABLES. 
+  
+   VARIABLES must be a list of symbols bound to arrays.
+   Each array must have the same dimensions. These are
+   checked at compile and run-time respectively.
+
+   Example: Maximum value in an array A
+
+   (vectorize-reduce #'max (a) a)
+
+   Example: Maximum absolute difference between two arrays A and B
+
+   (vectorize-reduce #'max (a b) (abs (- a b)))
+  "
+  ;; Check that variables is a list of only symbols
+  (dolist (var variables)
+    (if (not (symbolp var))
+        (error "~S is not a symbol" var)))
+  
+  (let ((size (gensym)) ; Total array size (same for all variables)
+        (result (gensym)) ; Returned value
+        (indx (gensym)))  ; Index inside loop from 0 to size
     
+    ;; Get the size of the first variable
+    `(let ((,size (array-total-size ,(first variables))))
+       ;; Check that all variables have the same size
+       ,@(map 'list (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
+                                                   (array-dimensions ,var)))
+                                       (error "~S and ~S have different dimensions" ',(first variables) ',var)))
+              (rest variables)) 
+       
+       ;; Apply FN with the first two elements (or fewer if size < 2)
+       (let ((,result (apply ,fn (loop for ,indx below (min ,size 2) collecting
+                                      (let ,(map 'list (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
+                                        (progn ,@body))))))
+         
+         ;; Loop over the remaining indices
+         (loop for ,indx from 2 below ,size do
+            ;; Locally redefine variables to be scalars at a given index
+              (let ,(map 'list (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
+                ;; User-supplied function body now evaluated for each index in turn
+                (setf ,result (funcall ,fn ,result (progn ,@body)))))
+         ,result))))
