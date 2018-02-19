@@ -273,9 +273,9 @@ as rank 0 arrays, following the usual semantics."
             (,type (array-element-type ,result))
             (,result-tmp ,result))
        ;; Check that all variables have the same size
-       ,@(map 'list #'(lambda (var) `(if (not (equal (array-dimensions ,(first variables))
-                                                     (array-dimensions ,var)))
-                                         (error "~S and ~S have different dimensions" ',(first variables) ',var)))
+       ,@(mapcar (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
+                                                (array-dimensions ,var)))
+                                    (error "~S and ~S have different dimensions" ',(first variables) ',var)))
               (rest variables))
        ;; Check dimensions of result done last, to avoid confusing errors
        ;; from incompatible arrays passed to vectorize or vectorize*
@@ -286,7 +286,7 @@ as rank 0 arrays, following the usual semantics."
        
        (dotimes (,indx ,size)
          ;; Locally redefine variables to be scalars at a given index
-         (let ,(map 'list #'(lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
+         (let ,(mapcar (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
            ;; User-supplied function body now evaluated for each index in turn
            (setf (row-major-aref ,result-tmp ,indx) (coerce (progn ,@body) ,type))))
        ,result)))
@@ -366,9 +366,9 @@ as rank 0 arrays, following the usual semantics."
     ;; Get the size of the first variable
     `(let ((,size (array-total-size ,(first variables))))
        ;; Check that all variables have the same size
-       ,@(map 'list (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
-                                                   (array-dimensions ,var)))
-                                       (error "~S and ~S have different dimensions" ',(first variables) ',var)))
+       ,@(mapcar (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
+                                                (array-dimensions ,var)))
+                                    (error "~S and ~S have different dimensions" ',(first variables) ',var)))
               (rest variables)) 
        
        ;; Apply FN with the first two elements (or fewer if size < 2)
@@ -379,7 +379,7 @@ as rank 0 arrays, following the usual semantics."
          ;; Loop over the remaining indices
          (loop for ,indx from 2 below ,size do
             ;; Locally redefine variables to be scalars at a given index
-              (let ,(map 'list (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
+              (let ,(mapcar (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
                 ;; User-supplied function body now evaluated for each index in turn
                 (setf ,result (funcall ,fn ,result (progn ,@body)))))
          ,result))))
