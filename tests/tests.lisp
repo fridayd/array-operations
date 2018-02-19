@@ -9,7 +9,7 @@
 (defsuite tests ())
 
 (defun run (&optional interactive?)
-  "Run all the tests for LLA."
+  "Run all the tests for array-operations."
   (run-suite 'tests :use-debugger interactive?))
 
 ;;; creation
@@ -122,7 +122,19 @@
                      (4 . #(1 1))
                      (5 . #(1 2)))
         (reverse result))))
-
+
+(deftest nested-loop (tests)
+  (let (result)
+    (aops:nested-loop (i j) '(2 3)
+      (push (list i j) result))
+    (assert-equalp '((0 0)
+                     (0 1)
+                     (0 2)
+                     (1 0)
+                     (1 1)
+                     (1 2))
+                   (reverse result))))
+
 ;;; displacement
 
 (deftest displacement (tests)
@@ -170,8 +182,15 @@
     (assert-equalp #2A((0 1 2) (3 4 5)) (aops:reshape a '(2 3)))
     (assert-equalp #2A((0 1 2 3 4 5)) (aops:reshape-row a))
     (assert-equalp #2A((0) (1) (2) (3) (4) (5)) (aops:reshape-col a))))
-
+
 ;;; transformations
+
+(deftest fill! (tests)
+  (let ((a (make-array '(3 2) :initial-element 1.0)))
+    (aops:fill! a 0)
+    (assert-equalp a #2A((0.0 0.0)
+                         (0.0 0.0)
+                         (0.0 0.0)))))
 
 (deftest coercing (tests)
   (assert-equality (curry #'every #'eql)

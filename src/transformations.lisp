@@ -2,6 +2,15 @@
 
 (in-package #:array-operations)
 
+(defun fill! (array value)
+  "Fills a given ARRAY with VALUE, coerced to the same element type as ARRAY"
+  (let* ((element-type (array-element-type array))
+         (size (array-total-size array))
+         (value-of-type (coerce value element-type)))
+    (dotimes (i size)
+      (setf (row-major-aref array i) value-of-type))
+    array))
+
 ;;; coercing can be used with * forms
 
 (defun coercing (element-type &optional (function #'identity))

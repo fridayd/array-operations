@@ -68,3 +68,40 @@ etc."
     `(walk-subscripts (,dimensions ,subscripts-vector ,position)
        (let ((,subscripts (coerce ,subscripts-vector 'list)))
          ,@body))))
+
+
+(defmacro nested-loop (syms dimensions &body body)
+  "Iterates over a multidimensional range of indices.
+   
+   SYMS must be a list of symbols, with the first symbol
+   corresponding to the outermost loop. 
+   
+   DIMENSIONS will be evaluated, and must be a list of 
+   dimension sizes, of the same length as SYMS.
+
+   Example:
+    (nested-loop (i j) '(10 20) (format t '~a ~a~%' i j))
+
+   expands to:
+
+    (loop for i from 0 below 10 do
+        (loop for j from 0 below 20 do
+            (format t '~a ~a~%' i j)))
+  "
+  (if syms
+      ;; Evaluate DIMENSIONS
+      (let ((dimensions (eval dimensions)))
+        (unless (listp dimensions) (error "Dimensions must evaluate to a list, but got ~S" dimensions))
+        
+        ;; Take the first symbol and the first dimension
+        (let ((sym (first syms))
+              (size (first dimensions)))
+          (unless (symbolp sym) (error "~S is not a symbol. First argument to nested-loop must be a list of symbols" sym))
+          (unless (integerp size) (error "Dimensions must be integers: ~S" size))
+          `(loop for ,sym from 0 below ,size do
+                (nested-loop ,(rest syms) ',(rest dimensions) ,@body)))) ; note dimensions quoted since it will be eval'd
+      ;; No symbols
+      (if (eval dimensions)
+          (error "More dimensions than symbols: ~s" dimensions)
+          `(progn ,@body))))
+

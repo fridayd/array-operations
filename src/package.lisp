@@ -21,7 +21,8 @@
    #:linspace*)
   (:export ; utilities
    #:walk-subscripts
-   #:walk-subscripts-list)
+   #:walk-subscripts-list
+   #:nested-loop)
   (:export ; general
    #:as-array
    #:element-type
@@ -49,6 +50,7 @@
    #:reshape-col
    #:reshape-row)
   (:export ; transformations
+   #:fill!
    #:coercing
    #:generate*
    #:generate
