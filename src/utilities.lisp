@@ -84,24 +84,35 @@ etc."
 
    expands to:
 
-    (loop for i from 0 below 10 do
-        (loop for j from 0 below 20 do
-            (format t '~a ~a~%' i j)))
+    ; Check dimensions
+    (destructuring-bind (g1 g2) '(10 20)
+        (loop for i from 0 below g1 do
+            (loop for j from 0 below g2 do
+                (format t '~a ~a~%' i j))))
+
+  with some additional type and dimension checks.
   "
-  (if syms
-      ;; Evaluate DIMENSIONS
-      (let ((dimensions (eval dimensions)))
-        (unless (listp dimensions) (error "Dimensions must evaluate to a list, but got ~S" dimensions))
-        
-        ;; Take the first symbol and the first dimension
-        (let ((sym (first syms))
-              (size (first dimensions)))
-          (unless (symbolp sym) (error "~S is not a symbol. First argument to nested-loop must be a list of symbols" sym))
-          (unless (integerp size) (error "Dimensions must be integers: ~S" size))
-          `(loop for ,sym from 0 below ,size do
-                (nested-loop ,(rest syms) ',(rest dimensions) ,@body)))) ; note dimensions quoted since it will be eval'd
-      ;; No symbols
-      (if (eval dimensions)
-          (error "More dimensions than symbols: ~s" dimensions)
-          `(progn ,@body))))
+  (unless syms (return-from nested-loop `(progn ,@body))) ; No symbols
+  
+  ;; Generate gensyms for dimension sizes
+  (let* ((rank (length syms))
+         (syms-rev (reverse syms)) ; Reverse, since starting with innermost
+         (dims-rev (loop for i from 0 below rank collecting (gensym))) ; innermost dimension first
+         (result `(progn ,@body))) ; Start with innermost expression
+    ;; Wrap previous result inside a loop for each dimension
+    (dotimes (i rank)
+      (let ((sym (nth i syms-rev))
+            (dim (nth i dims-rev)))
+        (unless (symbolp sym) (error "~S is not a symbol. First argument to nested-loop must be a list of symbols" sym))
+        (setf result
+              `(loop for ,sym from 0 below ,dim do
+                    ,result))))
+    ;; Add checking of rank and dimension types, and get dimensions into gensym list
+    (let ((dims (gensym)))
+      `(let ((,dims ,dimensions))
+         (unless (= (length ,dims) ,rank) (error "Incorrect number of dimensions: Expected ~a but got ~a" ,rank (length ,dims)))
+         (dolist (dim ,dims)
+           (unless (integerp dim) (error "Dimensions must be integers: ~S" dim)))
+         (destructuring-bind ,(reverse dims-rev) ,dims ; Dimensions reversed so that innermost is last
+           ,result)))))
 

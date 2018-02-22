@@ -133,7 +133,16 @@
                      (1 0)
                      (1 1)
                      (1 2))
-                   (reverse result))))
+        (reverse result)))
+
+  ; Test dimensions of local scope variable (no eval)
+  (let ((a #(1 2 3 4))
+        result)
+    (aops:nested-loop (i) (array-dimensions a)
+      (push i result))
+    (assert-equalp '(0 1 2 3) (reverse result))))
+
+
 
 ;;; displacement
 
