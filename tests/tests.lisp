@@ -344,6 +344,11 @@
     (assert-equalp #(9 12 15)
                    (aops:vectorize (a b) (+ a (* b 2))))))
 
+(deftest vectorize-reduce (tests)
+  (let ((a #2A((1 2) (3 4)))
+        (b #2A((1 3) (5 4))))
+    (assert-equalp 2
+                   (aops:vectorize-reduce #'max (a b) (abs (- a b))))))
 
 ;;; stack
 
