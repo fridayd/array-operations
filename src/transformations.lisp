@@ -216,7 +216,8 @@ as rank 0 arrays, following the usual semantics."
                                              :element-type element-type)))
       object))
 
-;;; outer produce
+;;; outer product
+
 (defun outer* (element-type function &rest arrays)
   "Generalized outer product of ARRAYS with FUNCTION.  The resulting array has the concatenated dimensions of ARRAYS, and the given ELEMENT-TYPE."
   (assert arrays)
@@ -226,8 +227,10 @@ as rank 0 arrays, following the usual semantics."
          (flat-result (reshape result flat-dimensions)))
     (walk-subscripts (flat-dimensions subscripts position)
       (setf (row-major-aref flat-result position)
-            (apply function (map 'list #'aref vectors subscripts))))
+            (apply function (map 'list (lambda (v s) (aref v s)) vectors subscripts))))
+    ;; Note: Using #'aref rather than (lambda (v s) (aref v s)) leads to error 
     result))
+
 
 (defun outer (function &rest arrays)
   "Like OUTER, with ELEMENT-TYPE t."
