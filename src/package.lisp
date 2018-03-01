@@ -72,7 +72,11 @@
    #:outer
    #:vectorize!
    #:vectorize*
-   #:vectorize
+   #:vectorize)
+  (:export ; reductions
+   #:most
+   #:argmax
+   #:argmin
    #:vectorize-reduce)
   (:export ; stack
    #:copy-row-major-block
