@@ -16,6 +16,7 @@
                (:file "general")
                (:file "displacement")
                (:file "transformations")
+               (:file "reductions")
                (:file "stack")))
 
 (asdf:defsystem #:array-operations-tests

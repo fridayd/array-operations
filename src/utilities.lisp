@@ -100,13 +100,11 @@ etc."
          (dims-rev (loop for i from 0 below rank collecting (gensym))) ; innermost dimension first
          (result `(progn ,@body))) ; Start with innermost expression
     ;; Wrap previous result inside a loop for each dimension
-    (dotimes (i rank)
-      (let ((sym (nth i syms-rev))
-            (dim (nth i dims-rev)))
-        (unless (symbolp sym) (error "~S is not a symbol. First argument to nested-loop must be a list of symbols" sym))
-        (setf result
-              `(loop for ,sym from 0 below ,dim do
-                    ,result))))
+    (loop for sym in syms-rev for dim in dims-rev do
+         (unless (symbolp sym) (error "~S is not a symbol. First argument to nested-loop must be a list of symbols" sym))
+         (setf result
+               `(loop for ,sym from 0 below ,dim do
+                     ,result)))
     ;; Add checking of rank and dimension types, and get dimensions into gensym list
     (let ((dims (gensym)))
       `(let ((,dims ,dimensions))
