@@ -34,15 +34,78 @@
     ;; join together the alist
     (t (mapcan #'find-array-dimensions expr))))
 
-(defmacro foreach (syms &key (sum nil) ((:do body) nil))
-  (let* ((dim-exprs (find-array-dimensions body))
-         (syms (if (listp syms) syms
-                   (list syms)))) ; Ensure that syms is a list
-    (dolist (sym syms)
-      ;; Check that SYM is a symbol
-      (unless (symbolp sym) (error "Index must be a symbol ~S" sym))
+(defmacro foreach (&key (index nil) (sum nil) ((:value body) nil))
+  "Examples:
+  
+   Matrix-matrix multiply
+   
+    (foreach :index (i j) :sum k 
+        :value (* (aref A i k) (aref B k j)))
+
+   Sum over vector
+
+    (foreach :sum i :value (aref A i))
+  "
+  (let ((dim-exprs (find-array-dimensions body))
+        (index (if (listp index) index
+                   (list index)))  ; Ensure that INDEX is a list
+        (sum (if (listp sum) sum
+                 (list sum))))  ; Ensure that SUM is a list
+    (flet ((get-dim-expr (sym)
+             ;; Get an expression to determine the range of index SYM
+             ;; Check that SYM is a symbol
+             (unless (symbolp sym) (error "Index must be a symbol ~S" sym))
+             
+             ;; Find an expression which sets the range of SYM
+             (let ((dim-expr (assoc sym dim-exprs)))
+               (unless dim-expr (error "Cannot determine range of index ~S" sym))
+               (rest dim-expr))))
+      (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
+            (sum-sizes (loop for i from 0 below (length sum) collecting (gensym)))
+            (let-list nil)   ; let environment
+            (result-array (gensym))  ; The array to be returned
+            (result body))   ; The result of this macro
+
+        (loop for sym in (reverse sum) for size in sum-sizes do
+           ;; Add a dimension to be set in the `let` environment
+             (push (list size (get-dim-expr sym)) let-list)
+           ;; Wrap a summation loop around the inner expression
+             (setf result
+                   `(loop for ,sym from 0 below ,size summing
+                         ,result)))
+
+        (when index
+          ;; Set elements of an array
+          (setf result
+                `(setf (aref ,result-array ,@index) ,result))
+        
+          (loop for sym in (reverse index) for size in index-sizes do
+             ;; Add a dimension to be set in the `let` environment
+               (push (list size (get-dim-expr sym)) let-list)
+             ;; Wrap a loop around result
+               (setf result
+                     `(loop for ,sym from 0 below ,size do
+                           ,result)))
+          (setf result
+                `(let ((,result-array (make-array (list ,@(reverse index-sizes)))))
+                   ,result
+                   ,result-array)))
+        
+        (list 'let let-list
+              result)))))
       
-      ;; Find an expression which sets the range of SYM
-      (let ((dim-expr (assoc sym dim-exprs)))
-        (unless dim-expr (error "Cannot determine range of index ~S" sym))
-        (format t "~a -> ~a~%" sym (rest dim-expr))))))
+;;;
+;;; Alternative form:
+;;;
+;;; (each-index (i j) expr)
+;;;
+;;; and
+;;;
+;;; (sum-index k expr)
+;;;
+;;; could be combined e.g.
+;;;
+;;; (each-index (i j)
+;;;   (sum-index k
+;;;     (* (aref A i k) (aref B k j))))
+;;;
