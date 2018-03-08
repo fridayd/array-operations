@@ -17,6 +17,7 @@
                (:file "displacement")
                (:file "transformations")
                (:file "reductions")
+               (:file "indexing")
                (:file "stack")))
 
 (asdf:defsystem #:array-operations-tests

@@ -1,7 +1,7 @@
 #+CAPTION: Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
 [[http://www.repostatus.org/badges/latest/wip.svg]]
 
-| This is an *alpha* release.  All the code works and unit tests are expected to run perfectly, but the operations are not optimized and the API change. |
+| This is an *alpha* release.  All the code works and unit tests are expected to pass, but the operations are not optimized and the API may change. |
 
 
 A version of this library is available from [[https://www.quicklisp.org/beta/][quicklisp]].
@@ -140,7 +140,7 @@ The following functions all make a new array, taking the dimensions as input. Th
 | ones     | Filled with ones                                                 |
 | rand     | Filled with uniformly distrubuted random numbers between 0 and 1 |
 | randn    | Normally distributed with mean 0 and standard deviation 1        |
-| linspace | Evenly spaced numbers in given range [START STOP]                |
+| linspace | Evenly spaced numbers in given range                             |
 
 =generate= (and =generate*=) allow you to generate arrays using functions.
 #+BEGIN_SRC lisp
@@ -163,6 +163,18 @@ Depending on the last argument, the function will be called with the (row-major)
   (aops:each #'+ #(0 1 2) #(2 3 5)) ; => #(2 4 7)
 #+END_SRC
 
+=vectorize= is a macro which performs elementwise operations 
+
+#+BEGIN_SRC lisp
+  (defparameter *a* #(1 2 3 4))
+  (aops:vectorize (*a*) (* 2 *a*)) ; => #(2 4 6 8)
+
+  (defparameter b #(2 3 4 5))
+  (aops:vectorize (a b) (* a (sin b))) ; => #(0.9092974 0.28224 -2.2704074 -3.8356972)
+#+END_SRC
+There is also a version =vectorize*= which takes a type argument for the resulting
+array, and a version =vectorize!= which sets elements in a given array.
+
 The semantics of =margin= are more difficult to explain, so perhaps an example will be more useful.  Suppose that you want to calculate column sums in a matrix.  You could =permute= (transpose) the matrix, =split= its subarrays at rank one (so you get a vector for each row), and apply the function that calculates the sum.  =margin= automates that for you:
 #+BEGIN_SRC lisp
   (aops:margin (lambda (column)
@@ -177,6 +189,55 @@ Finally, =recycle= allows you to recycle arrays along inner and outer dimensions
 #+BEGIN_SRC lisp
   (aops:recycle #(2 3) :inner 2 :outer 4)
   ; => #3A(((2 2) (3 3)) ((2 2) (3 3)) ((2 2) (3 3)) ((2 2) (3 3)))
+#+END_SRC
+
+** Indexing operations
+
+=nested-loop= is a simple macro which iterates over a set of indices with a given range
+
+#+BEGIN_SRC lisp
+  (defparameter A #2A((1 2) (3 4)))
+
+  (aops:nested-loop (i j) (array-dimensions A)
+    (setf (aref A i j) (* 2 (aref A i j))))
+  A ; => #2A((2 4) (6 8))
+
+  (aops:nested-loop (i j) '(2 3)
+    (format t "(~a ~a) " i j)) ; => (0 0) (0 1) (0 2) (1 0) (1 1) (1 2) 
+#+END_SRC
+
+=sum-index= is a macro which uses a simple code walker to determine the dimension sizes,
+summing over the given index or indices
+
+#+BEGIN_SRC lisp
+  (defparameter A #2A((1 2) (3 4)))
+
+  ;; Trace
+  (aops:sum-index i (aref A i i)) ; => 5
+
+  ;; Sum array
+  (aops:sum-index (i j) (aref A i i)) ; => 10
+
+  ;; Sum array
+  (aops:sum-index i (row-major-aref A i)) ; => 10
+#+END_SRC
+The main use for =sum-index= is in combination with =each-index=
+
+=each-index= is a macro which creates an array and iterates over the elements.
+Like =sum-index= it is given one or more index symbols, 
+and uses a code walker to find array dimensions.
+
+#+BEGIN_SRC lisp
+  (defparameter A #2A((1 2) (3 4)))
+  (defparameter B #2A((5 6) (7 8)))
+
+  ;; Transpose
+  (aops:each-index (i j) (aref A j i)) ; => #2A((1 3) (2 4))
+
+  ;; Matrix-matrix multiply
+  (aops:each-index (i j)
+     (aops:sum-index k
+        (* (aref A i k) (aref B k j)))) ; => #2A((19 22) (43 50))
 #+END_SRC
 
 ** Scalars as 0-dimensional arrays
@@ -199,9 +260,6 @@ You can also stack compatible arrays along any axis:
   
 #+END_SRC
 
-** Shared structure
-
-*Rules for that aren't finalized yet, see the source.*  Suggestions are welcome.
 
 * To-do list
 ** benchmark and optimize walk-subscripts and walk-subscripts-list

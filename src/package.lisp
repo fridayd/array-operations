@@ -78,6 +78,9 @@
    #:argmax
    #:argmin
    #:vectorize-reduce)
+  (:export ; indexing
+   #:each-index
+   #:sum-index)
   (:export ; stack
    #:copy-row-major-block
    #:stack-rows-copy
