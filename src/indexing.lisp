@@ -95,7 +95,7 @@
               result)))))
       
 ;;;
-;;; Alternative form:
+;;; More lispy way to iterate over indices
 ;;;
 ;;; (each-index (i j) expr)
 ;;;
@@ -111,6 +111,32 @@
 ;;;
 
 (defmacro each-index (index &body body)
+  "Given one or more symbols INDEX, walks the BODY expression 
+   to determine the index ranges by looking for 
+   AREF and ROW-MAJOR-AREF calls.
+
+  Transpose of 2D array A
+
+    (each-index (i j) 
+      (aref A j i))
+
+  Diagonal of a square 2D array
+
+    (each-index i (aref A i i))
+
+  Turn a 2D array into an array of arrays
+
+    (each-index i
+      (each-index j
+        (aref A i j)))
+
+  Matrix-vector product:
+
+    (each-index i
+      (sum-index j
+        (* (aref A i j) (aref x j))))
+
+  "
   (let ((dim-exprs (find-array-dimensions body))
         (index (if (listp index) index
                    (list index))))  ; Ensure that INDEX is a list

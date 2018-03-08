@@ -359,6 +359,56 @@
     (assert-equalp 2
                    (aops:vectorize-reduce #'max (a b) (abs (- a b))))))
 
+;;; indexing
+
+(deftest each-index (tests)
+  (let ((a #2A((1 2 3) (4 5 6)))
+        (b #2A((1 2) (3 4))))
+    
+    ;; Transpose
+    (assert-equalp
+        #2A((1 4) (2 5) (3 6))
+        (aops:each-index (i j) (aref a j i)))
+
+    ;; Diagonal
+    (assert-equalp
+        #(1 4)
+        (aops:each-index i (aref b i i)))
+
+    ;; Arrays of arrays
+    (assert-equalp
+        #( #(1 2 3) #(4 5 6) )
+        (aops:each-index i
+          (aops:each-index j
+            (aref A i j))))
+    
+    ;; Matrix-matrix multiply
+    (assert-equalp
+        #2A((9 12 15) (19 26 33))
+      (aops:each-index (i j)
+        (aops:sum-index k
+          (* (aref B i k) (aref A k j)))))))
+
+
+(deftest sum-index (tests)
+  (let ((A #2A((1 2) (3 4))))
+
+    ;; Sum all elements
+    (assert-equalp
+        10
+        (aops:sum-index i (row-major-aref A i)))
+
+    ;; Sum all elements using AREF
+    (assert-equalp
+        10
+        (aops:sum-index (i j) (aref A i j)))
+
+    ;; Trace of array
+    (assert-equalp
+        5
+        (aops:sum-index i (aref A i i)))))
+    
+
 ;;; stack
 
 (deftest stack-rows (tests)
