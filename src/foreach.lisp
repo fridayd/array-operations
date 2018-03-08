@@ -109,3 +109,82 @@
 ;;;   (sum-index k
 ;;;     (* (aref A i k) (aref B k j))))
 ;;;
+
+(defmacro each-index (index &body body)
+  (let ((dim-exprs (find-array-dimensions body))
+        (index (if (listp index) index
+                   (list index))))  ; Ensure that INDEX is a list
+    ;; Check that all elements of INDEX are symbols
+    (dolist (sym index)
+      (unless (symbolp sym) (error "Index must be a symbol ~S" sym)))
+
+    (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
+          (let-list nil)   ; let environment
+          (result-array (gensym))  ; The array to be returned
+          (result body))   ; The result of this macro
+
+      ;; Innermost form sets elements in the result array
+      (setf result
+            `(setf (aref ,result-array ,@index) (progn ,@result)))
+
+      (loop for sym in (reverse index) for size in index-sizes do
+         ;; Add a dimension to be set in the `let` environment
+         ;; Find an expression which sets the range of SYM
+           (let ((dim-expr (assoc sym dim-exprs)))
+             (unless dim-expr (error "Cannot determine range of index ~S" sym))
+             (push (list size (rest dim-expr)) let-list))
+           
+         ;; Wrap a loop around RESULT
+           (setf result
+                 `(loop for ,sym from 0 below ,size do
+                       ,result)))
+
+      `(let ,let-list
+         (let ((,result-array (make-array (list ,@(reverse index-sizes)))))
+           ,result
+           ,result-array)))))
+
+(defmacro sum-index (index &body body)
+  "Sums over one or more INDEX symbols in an array expression.
+   The range of these symbols is determined by walking the tree
+   for AREF and ROW-MAJOR-AREF calls.
+
+  Example:
+
+   (defparameter A #2A((1 2) (3 4)))
+
+   (sum-index i (row-major-aref A i))  ; Sum all elements
+   => 10
+
+   (sum-index (i j) (aref A i j))  ; Sum all elements
+   => 10 
+
+   (sum-index i (aref A i i))  ; Trace of array
+   => 5
+  "
+  (let ((dim-exprs (find-array-dimensions body))
+        (index (if (listp index) index
+                   (list index))))  ; Ensure that INDEX is a list
+    ;; Check that all elements of INDEX are symbols
+    (dolist (sym index)
+      (unless (symbolp sym) (error "Index must be a symbol ~S" sym)))
+
+    (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
+          (let-list nil)   ; let environment
+          (result (cons 'progn body)))   ; The result of this macro
+      
+      (loop for sym in (reverse index) for size in index-sizes do
+         ;; Add a dimension to be set in the `let` environment
+         ;; Find an expression which sets the range of SYM
+           (let ((dim-expr (assoc sym dim-exprs)))
+             (unless dim-expr (error "Cannot determine range of index ~S" sym))
+             (push (list size (rest dim-expr)) let-list))
+           
+         ;; Wrap a loop around RESULT
+           (setf result
+                 `(loop for ,sym from 0 below ,size summing
+                       ,result)))
+
+      (list 'let let-list
+         result))))
+
