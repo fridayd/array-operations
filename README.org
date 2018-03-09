@@ -166,8 +166,8 @@ Depending on the last argument, the function will be called with the (row-major)
 =vectorize= is a macro which performs elementwise operations 
 
 #+BEGIN_SRC lisp
-  (defparameter *a* #(1 2 3 4))
-  (aops:vectorize (*a*) (* 2 *a*)) ; => #(2 4 6 8)
+  (defparameter a #(1 2 3 4))
+  (aops:vectorize (a) (* 2 a)) ; => #(2 4 6 8)
 
   (defparameter b #(2 3 4 5))
   (aops:vectorize (a b) (* a (sin b))) ; => #(0.9092974 0.28224 -2.2704074 -3.8356972)
@@ -216,12 +216,12 @@ summing over the given index or indices
   (aops:sum-index i (aref A i i)) ; => 5
 
   ;; Sum array
-  (aops:sum-index (i j) (aref A i i)) ; => 10
+  (aops:sum-index (i j) (aref A i j)) ; => 10
 
   ;; Sum array
   (aops:sum-index i (row-major-aref A i)) ; => 10
 #+END_SRC
-The main use for =sum-index= is in combination with =each-index=
+The main use for =sum-index= is in combination with =each-index=.
 
 =each-index= is a macro which creates an array and iterates over the elements.
 Like =sum-index= it is given one or more index symbols, 
@@ -239,6 +239,36 @@ and uses a code walker to find array dimensions.
      (aops:sum-index k
         (* (aref A i k) (aref B k j)))) ; => #2A((19 22) (43 50))
 #+END_SRC
+
+** Reductions
+
+Some reductions over array elements can be done using the CL =reduce= function,
+together with =aops:flatten=, which returns a displaced vector:
+
+#+BEGIN_SRC lisp
+  (defparameter a #2A((1 2) (3 4)))
+  (reduce #'max (aops:flatten a)) ; => 4
+#+END_SRC
+
+=argmax= and =argmin= find the =row-major-aref= index where an array
+is maximum or minimum. They both return two values: the first value is
+the index; the second is the array value at that index.
+
+#+BEGIN_SRC lisp
+  (defparameter a #(1 2 5 4 2))
+  (aops:argmax a) ; => 2 5
+  (aops:argmin a) ; => 0 1
+#+END_SRC
+
+More complicated reductions can be done with =aops:vectorize-reduce=,
+for example the maximum absolute difference between arrays:
+#+BEGIN_SRC lisp
+  (defparameter a #2A((1 2) (3 4)))
+  (defparameter b #2A((2 2) (1 3)))
+
+  (aops:vectorize-reduce #'max (a b) (abs (- a b))) ; => 2
+#+END_SRC
+
 
 ** Scalars as 0-dimensional arrays
 
