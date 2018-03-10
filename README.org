@@ -6,8 +6,9 @@ Common Lisp arrays and performing numerical calculations with them.
 It is mainly intended to be convenient and portable, rather than
 fast.
 
-A version of this library is on QuickLisp, which includes some but not
-all functionality. It includes the =generate=, =each= (element-wise
+A version of this library is on QuickLisp, based on the [[https://github.com/tpapp/array-operations][original
+library]] (now unmaintained). The QuickLisp version has some but
+not all functionality: It includes the =generate=, =each= (element-wise
 map), =displace=, =flatten=, =split=, =combine=, =sub=, =partition=,
 =stack=, =reshape=, =margin= and =recycle= functions.
 
@@ -22,8 +23,8 @@ To run the test suite (using [[https://github.com/tgutu/clunit][clunit]]):
   (array-operations-tests:run)
 #+END_SRC
 
-This fork of the [[https://github.com/tpapp/array-operations][original library]] adds =each-index=, =sum-index=,
-=vectorize= (a version of which was also in an [[https://github.com/tpapp/array-operations-old][older library]]),
+This fork keeps these functions, and adds =each-index=,
+=sum-index=, =vectorize= (a version of which was also in an [[https://github.com/tpapp/array-operations-old][older library]]),
 =vectorize-reduce=, =zeros=, =ones=, =rand=, =randn=, =linspace=,
 =argmax= and =argmin=. To install, clone into your Quicklisp local
 project directory:
