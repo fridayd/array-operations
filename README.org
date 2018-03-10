@@ -7,8 +7,8 @@ It is mainly intended to be convenient and portable, rather than
 fast.
 
 A version of this library is on QuickLisp, based on the [[https://github.com/tpapp/array-operations][original
-library]] (now unmaintained). The QuickLisp version has some but
-not all functionality: It includes the =generate=, =each= (element-wise
+library]]. The QuickLisp version has some but not all functionality of
+this fork: It includes the =generate=, =each= (element-wise
 map), =displace=, =flatten=, =split=, =combine=, =sub=, =partition=,
 =stack=, =reshape=, =margin= and =recycle= functions.
 
@@ -24,10 +24,9 @@ To run the test suite (using [[https://github.com/tgutu/clunit][clunit]]):
 #+END_SRC
 
 This fork keeps these functions, and adds =each-index=,
-=sum-index=, =vectorize= (a version of which was also in an [[https://github.com/tpapp/array-operations-old][older library]]),
-=vectorize-reduce=, =zeros=, =ones=, =rand=, =randn=, =linspace=,
-=argmax= and =argmin=. To install, clone into your Quicklisp local
-project directory:
+=sum-index=, =vectorize=, =vectorize-reduce=, =nested-loop=, =zeros=,
+=ones=, =rand=, =randn=, =linspace=, =argmax= and =argmin=. 
+To install, clone into your Quicklisp local project directory:
 
 #+BEGIN_SRC bash
   $ git clone https://github.com/bendudson/array-operations.git ~/quicklisp/local-projects/
