@@ -304,12 +304,12 @@ as rank 0 arrays, following the usual semantics."
    checked at compile and run-time respectively.
    
        (let ((a #2A((1 2) (3 4))))
-           (vectorize (a) (+ a 1)))
+           (vectorize* t (a) (+ a 1)))
        -> #2A((2 3) (4 5))
    
        (let ((a #(1 2 3))
              (b #(4 5 6)))
-           (vectorize (a b) (+ a (* b 2))))
+           (vectorize* t (a b) (+ a (* b 2))))
        -> #(9 12 15)
    "
   (let ((result (gensym))) ; Returned array

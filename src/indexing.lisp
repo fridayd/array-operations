@@ -110,6 +110,98 @@
 ;;;     (* (aref A i k) (aref B k j))))
 ;;;
 
+(defmacro each-index* (element-type index &body body)
+  "Given one or more symbols INDEX, creates an array
+   with ELEMENT-TYPE, then iterates over the index ranges
+   with the innermost loop using the last index. 
+   Each iteration evaluates BODY, and sets the array element.
+
+   To find the range of the indices, walks the BODY expression 
+   to determine the index ranges by looking for 
+   AREF and ROW-MAJOR-AREF calls. 
+
+  Transpose of 2D array A
+
+    (each-index* t (i j) 
+      (aref A j i))
+
+  Diagonal of a square 2D array
+
+    (each-index* t i (aref A i i))
+
+  Turn a 2D array into an array of arrays
+
+    (each-index* t i
+      (each-index* t j
+        (aref A i j)))
+
+  Outer product of two 1D arrays to create a 2D array
+
+    (each-index* t (i j)
+      (* (aref x i) (aref y j)))
+
+  Matrix-vector product:
+
+    (each-index* t i
+      (sum-index j
+        (* (aref A i j) (aref x j))))
+
+  "
+  (let ((dim-exprs (find-array-dimensions body))
+        (index (if (listp index) index
+                   (list index))))  ; Ensure that INDEX is a list
+    ;; Check that all elements of INDEX are symbols
+    (dolist (sym index)
+      (unless (symbolp sym) (error "Index must be a symbol ~S" sym)))
+
+    (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
+          (let-list nil)   ; let environment
+          (result-array (gensym))  ; The array to be returned
+          (result body))   ; The result of this macro
+
+      ;; Innermost form sets elements in the result array
+      (setf result
+            `(setf (aref ,result-array ,@index) (coerce (progn ,@result) ,element-type)))
+      
+      (loop for sym in (reverse index) for size in index-sizes do
+         ;; Add a dimension to be set in the `let` environment
+         ;; Find an expression which sets the range of SYM
+           (let ((dim-expr (assoc sym dim-exprs)))
+             (unless dim-expr (error "Cannot determine range of index ~S" sym))
+             (push (list size (rest dim-expr)) let-list))
+           
+         ;; Wrap a loop around RESULT
+           (setf result
+                 `(loop for ,sym from 0 below ,size do
+                       ,result)))
+
+      `(let ,let-list
+         (let ((,result-array (make-array (list ,@(reverse index-sizes)) :element-type ,element-type )))
+           ,result
+           ,result-array)))))
+
+
+(defmacro each-index! (array index &body body)
+  "Sets elements of the given ARRAY to values of the BODY, 
+   evaluated at array indices INDEX
+
+  Note: This has the same semantics as each-index and each-index*,
+  but the INDEX ranges are taken from the ARRAY dimensions, not 
+  a code walker.
+  "
+  (unless (symbolp array) (error "ARRAY ~S input to each-index! must be a symbol" array))
+
+  (let ((index (if (listp index) index
+                   (list index)))) ; Ensure that INDEX is a list
+    (dolist (sym index)
+      (unless (symbolp sym) (error "~S is not a symbol" sym)))
+  
+    `(progn
+       (nested-loop ,index (array-dimensions ,array)
+                    (setf (aref ,array ,@index) (progn ,@body)))
+       ,array)))
+  
+
 (defmacro each-index (index &body body)
   "Given one or more symbols INDEX, walks the BODY expression 
    to determine the index ranges by looking for 
@@ -137,38 +229,12 @@
         (* (aref A i j) (aref x j))))
 
   "
-  (let ((dim-exprs (find-array-dimensions body))
-        (index (if (listp index) index
-                   (list index))))  ; Ensure that INDEX is a list
-    ;; Check that all elements of INDEX are symbols
-    (dolist (sym index)
-      (unless (symbolp sym) (error "Index must be a symbol ~S" sym)))
+  `(each-index* t ,index ,@body))
 
-    (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
-          (let-list nil)   ; let environment
-          (result-array (gensym))  ; The array to be returned
-          (result body))   ; The result of this macro
 
-      ;; Innermost form sets elements in the result array
-      (setf result
-            `(setf (aref ,result-array ,@index) (progn ,@result)))
 
-      (loop for sym in (reverse index) for size in index-sizes do
-         ;; Add a dimension to be set in the `let` environment
-         ;; Find an expression which sets the range of SYM
-           (let ((dim-expr (assoc sym dim-exprs)))
-             (unless dim-expr (error "Cannot determine range of index ~S" sym))
-             (push (list size (rest dim-expr)) let-list))
-           
-         ;; Wrap a loop around RESULT
-           (setf result
-                 `(loop for ,sym from 0 below ,size do
-                       ,result)))
 
-      `(let ,let-list
-         (let ((,result-array (make-array (list ,@(reverse index-sizes)))))
-           ,result
-           ,result-array)))))
+;;;
 
 (defmacro sum-index (index &body body)
   "Sums over one or more INDEX symbols in an array expression.

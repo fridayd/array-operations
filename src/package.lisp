@@ -80,6 +80,8 @@
    #:vectorize-reduce)
   (:export ; indexing
    #:each-index
+   #:each-index*
+   #:each-index!
    #:sum-index)
   (:export ; stack
    #:copy-row-major-block

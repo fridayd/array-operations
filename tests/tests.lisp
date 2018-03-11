@@ -389,7 +389,21 @@
         (aops:sum-index k
           (* (aref B i k) (aref A k j)))))))
 
+(deftest each-index! (tests)
+  (let ((a (make-array '(2 3))))
 
+    ;; Returns the result
+    (assert-equalp
+     #2A((0 1 2) (-1 0 1))
+     (aops:each-index! a (i j) (- j i)))
+
+    ;; Also modifies A
+    (assert-equalp
+     #2A((0 1 2) (-1 0 1))
+     a)))
+     
+     
+        
 (deftest sum-index (tests)
   (let ((A #2A((1 2) (3 4))))
 
