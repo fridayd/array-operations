@@ -375,6 +375,10 @@
         #(1 4)
         (aops:each-index i (aref b i i)))
 
+    ;; Checks dimensions
+    (assert-condition error
+        (aops:each-index i (aref a i i)))
+      
     ;; Arrays of arrays
     (assert-equalp
         #( #(1 2 3) #(4 5 6) )
@@ -405,8 +409,9 @@
      
         
 (deftest sum-index (tests)
-  (let ((A #2A((1 2) (3 4))))
-
+  (let ((A #2A((1 2) (3 4)))
+        (B #2A((1 2 3) (4 5 6))))
+    
     ;; Sum all elements
     (assert-equalp
         10
@@ -420,7 +425,11 @@
     ;; Trace of array
     (assert-equalp
         5
-        (aops:sum-index i (aref A i i)))))
+        (aops:sum-index i (aref A i i)))
+
+    ;; Checks incompatible dimensions
+    (assert-condition error
+        (aops:sum-index i (aref B i i)))))
     
 
 ;;; stack

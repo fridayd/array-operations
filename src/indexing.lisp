@@ -18,6 +18,9 @@
     ((equalp (first expr) 'aref)
      ;; Parse this AREF for indices
      (let ((arr (second expr)))
+       (unless (symbolp arr)
+         (warn "Array expression ~S will be evaluated multiple times" arr))
+       
        (do ((ind 0 (1+ ind))
             (symlist (cddr expr) (cdr symlist))
             ;; Build list of index constraints (symbol, array, index)
@@ -28,7 +31,11 @@
 
     ;; If EXPR is ROW-MAJOR-AREF
     ((equalp (first expr) 'row-major-aref)
-     (list (list (third expr) 'array-total-size (second expr))))
+     (let ((arr (second expr)))
+       (unless (symbolp arr)
+         (warn "Array expression ~S will be evaluated multiple times" arr))
+     
+       (list (list (third expr) 'array-total-size arr))))
     
     ;; Otherwise, walk elements of the list
     ;; join together the alist
@@ -156,6 +163,7 @@
 
     (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
           (let-list nil)   ; let environment
+          (checks-list nil)  ; Array size checks
           (result-array (gensym))  ; The array to be returned
           (result body))   ; The result of this macro
 
@@ -168,14 +176,24 @@
          ;; Find an expression which sets the range of SYM
            (let ((dim-expr (assoc sym dim-exprs)))
              (unless dim-expr (error "Cannot determine range of index ~S" sym))
-             (push (list size (rest dim-expr)) let-list))
-           
+             (push (list size (rest dim-expr)) let-list)
+             
+             ;; Check that dimensions are consistent
+             ;; Get list of dimension expressions
+             
+             (dolist (expr (cdr (remove-if-not (lambda (it) (eq it sym))
+                                               dim-exprs :key #'car)))
+               (push `(unless (= ,(rest expr) ,size)
+                        (error "Incompatible sizes for index ~S : ~S and ~S" ',sym ,(rest dim-expr) ,(rest expr)))
+                     checks-list)))
+             
          ;; Wrap a loop around RESULT
            (setf result
                  `(loop for ,sym from 0 below ,size do
                        ,result)))
-
+      
       `(let ,let-list
+         ,@checks-list
          (let ((,result-array (make-array (list ,@(reverse index-sizes)) :element-type ,element-type )))
            ,result
            ,result-array)))))
@@ -263,6 +281,7 @@
 
     (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
           (let-list nil)   ; let environment
+          (checks-list nil)  ; Array size checks
           (result (cons 'progn body)))   ; The result of this macro
       
       (loop for sym in (reverse index) for size in index-sizes do
@@ -270,13 +289,22 @@
          ;; Find an expression which sets the range of SYM
            (let ((dim-expr (assoc sym dim-exprs)))
              (unless dim-expr (error "Cannot determine range of index ~S" sym))
-             (push (list size (rest dim-expr)) let-list))
+             (push (list size (rest dim-expr)) let-list)
+             ;; Check that dimensions are consistent
+             ;; Get list of dimension expressions
+             
+             (dolist (expr (cdr (remove-if-not (lambda (it) (eq it sym))
+                                               dim-exprs :key #'car)))
+               (push `(unless (= ,(rest expr) ,size)
+                        (error "Incompatible sizes for index ~S : ~S and ~S" ',sym ,(rest dim-expr) ,(rest expr)))
+                     checks-list)))
            
          ;; Wrap a loop around RESULT
            (setf result
                  `(loop for ,sym from 0 below ,size summing
                        ,result)))
 
-      (list 'let let-list
-         result))))
+      `(let ,let-list
+         ,@checks-list
+         ,result))))
 
