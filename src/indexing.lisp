@@ -36,6 +36,15 @@
          (warn "Array expression ~S will be evaluated multiple times" arr))
      
        (list (list (third expr) 'array-total-size arr))))
+
+    ;; If EXPR is SVREF or ELT
+    ((or (equalp (first expr) 'svref)
+         (equalp (first expr) 'elt))
+     (let ((arr (second expr)))
+       (unless (symbolp arr)
+         (warn "Expression ~S will be evaluated multiple times" arr))
+     
+       (list (list (third expr) 'length arr))))
     
     ;; Otherwise, walk elements of the list
     ;; join together the alist

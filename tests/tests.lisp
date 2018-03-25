@@ -391,7 +391,32 @@
         #2A((9 12 15) (19 26 33))
       (aops:each-index (i j)
         (aops:sum-index k
-          (* (aref B i k) (aref A k j)))))))
+          (* (aref B i k) (aref A k j))))))
+  
+  ;; Indexing with ELT and SVREF
+  (let ((a #(1 2 3)))
+    (assert-equalp
+     #(1 2 3)
+     (aops:each-index i (elt a i)))
+    
+    (assert-equalp
+     #(1 2 3)
+     (aops:each-index i (svref a i)))))
+
+(deftest each-index* (tests)
+  (let ((a #(1 2 3))
+        (b #2A((1 2) (3 4))))
+    
+    ;; Test element type (fixnum)
+    (assert-equalp
+        'fixnum
+        (array-element-type (aops:each-index* 'fixnum i (aref a i))))
+
+    ;; Test whole type, 2x2 array
+    (assert-true
+        (typep
+         (aops:each-index* 'single-float (i j) (aref b i j))
+         '(SIMPLE-ARRAY SINGLE-FLOAT (2 2))))))
 
 (deftest each-index! (tests)
   (let ((a (make-array '(2 3))))
