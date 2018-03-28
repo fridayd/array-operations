@@ -18,7 +18,8 @@
    #:randn
    #:randn*
    #:linspace
-   #:linspace*)
+   #:linspace*
+   #:similar-array)
   (:export ; utilities
    #:walk-subscripts
    #:walk-subscripts-list
@@ -74,7 +75,6 @@
    #:vectorize*
    #:vectorize)
   (:export ; reductions
-   #:most
    #:argmax
    #:argmin
    #:vectorize-reduce)

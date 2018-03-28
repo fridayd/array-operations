@@ -109,6 +109,21 @@
   (assert-equalp #(0 1/2 1 3/2 2) (aops:linspace 1 3 5))
   (assert-equalp #(0.0d0 2.0d0 4.0d0) (aops:linspace 0 4d0 3)))
 
+(deftest similar-array (tests)
+  (let* ((a #(1 2 3 4))
+         (a* (aops:similar-array a)))
+    (assert-equalp '(4) (array-dimensions a*))
+    (assert-true (typep (array-element-type a*) 'T)))
+  
+  (let* ((b (make-array '(2 2) :element-type 'fixnum))
+         (b* (aops:similar-array b))
+         (c (aops:similar-array b :element-type 'double-float))
+         (d (aops:similar-array b :adjustable t)))
+    (assert-equalp '(2 2) (array-dimensions b*))
+    (assert-equalp (array-element-type b*) 'FIXNUM)
+    (assert-equalp (array-element-type c) 'DOUBLE-FLOAT)
+    (assert-true (adjustable-array-p d))))
+
 ;;; utilities
 
 (deftest walk-subscripts (tests)

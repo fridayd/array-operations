@@ -139,3 +139,18 @@
   (linspace 0 4d0 3) -> #(0.0d0 2.0d0 4.0d0)
   "
   (linspace* t start stop n))
+
+(defun similar-array (array &key (element-type (array-element-type array))
+                                 (fill-pointer (and (array-has-fill-pointer-p array)
+                                                    (fill-pointer array)))
+                                 (adjustable (adjustable-array-p array)))
+  "Make a new array of the same shape, element type, fill pointer and
+   adjustability (if any) as ARRAY, unless overridden by the keyword arguments.
+
+  See alexandria:copy-array for similar function which copies contents
+  "
+  (make-array (array-dimensions array)
+              :element-type element-type
+              :adjustable adjustable
+              :fill-pointer fill-pointer))
+
