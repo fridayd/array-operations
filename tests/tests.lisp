@@ -458,10 +458,18 @@
     ;; Also modifies A
     (assert-equalp
      #2A((0 1 2) (-1 0 1))
-     a)))
-     
-     
-        
+      a))
+
+  ;; First argument is evaluated only once
+  (let ((count 0))
+    (assert-equalp
+        #2A((0 1 2) (-1 0 1))
+      (aops:each-index! (progn
+                          (incf count)
+                          (make-array '(2 3)))
+          (i j) (- j i)))
+    (assert-equalp 1 count "Expression not evaluated only once")))   
+
 (deftest sum-index (tests)
   (let ((A #2A((1 2) (3 4)))
         (B #2A((1 2 3) (4 5 6))))

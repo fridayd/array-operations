@@ -216,18 +216,18 @@
   but the INDEX ranges are taken from the ARRAY dimensions, not 
   a code walker.
   "
-  (unless (symbolp array) (error "ARRAY ~S input to each-index! must be a symbol" array))
-
   (let ((index (if (listp index) index
-                   (list index)))) ; Ensure that INDEX is a list
+                   (list index)))  ; Ensure that INDEX is a list
+        (result (gensym)))    ; If ARRAY is an expression, evaluate once only
     (dolist (sym index)
       (unless (symbolp sym) (error "~S is not a symbol" sym)))
   
     `(progn
-       (nested-loop ,index (array-dimensions ,array)
-                    (setf (aref ,array ,@index) (progn ,@body)))
-       ,array)))
-  
+       (let ((,result ,array))
+         (nested-loop ,index (array-dimensions ,result)
+           (setf (aref ,result ,@index) (progn ,@body)))
+         ,result))))
+
 
 (defmacro each-index (index &body body)
   "Given one or more symbols INDEX, walks the BODY expression 
