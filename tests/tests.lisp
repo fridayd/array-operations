@@ -338,15 +338,29 @@
         (b #(4 5 6)))
     (let ((c (make-array 3 :element-type 'integer)))
       (assert-equalp #(9 12 15)
-          (aops:vectorize! c (a b) (+ a (* b 2)))
-        "vectorize! return value")
+                     (aops:vectorize! c (a b) (+ a (* b 2)))
+                     "vectorize! return value")
       (assert-equalp #(9 12 15) c
-        "vectorize! modified first arg"))
+                     "vectorize! modified first arg"))
     (let ((c (make-array 4 :element-type 'integer)))
       (assert-condition error
           (aops:vectorize! c (a b) (+ a (* b 2)))
-        "Wrong result array shape"))))
+          "Wrong result array shape")))
+
+  ;; Check that an expression can be passed as first argument
+  ;; without being evaluated multiple times
+  (let ((a #(1 2 3))
+        (b #(4 5 6)))
+
+    (let ((count 0)) ; Count how many times make-array is called
+      (assert-equalp #(9 12 15)
+          (aops:vectorize! (progn
+                             (incf count) 
+                             (make-array 3 :element-type 'integer))
+              (a b) (+ a (* b 2))))
       
+      (assert-equalp 1 count "Expression evaluated multiple times"))))
+
 
 (deftest vectorize* (tests)
   (let ((a #2A((1 2) (3 4)))

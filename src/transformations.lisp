@@ -273,8 +273,8 @@ as rank 0 arrays, following the usual semantics."
     
     ;; Create a new array
     `(let* ((,size (array-total-size ,(first variables)))
-            (,type (array-element-type ,result))
-            (,result-tmp ,result))
+            (,result-tmp ,result)  ; result may be an expression. once-only
+            (,type (array-element-type ,result-tmp)))
        ;; Check that all variables have the same size
        ,@(mapcar (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
                                                 (array-dimensions ,var)))
@@ -284,7 +284,7 @@ as rank 0 arrays, following the usual semantics."
        ;; from incompatible arrays passed to vectorize or vectorize*
        ;; in which cases result is a gensym.
        (if (not (equal (array-dimensions ,(first variables))
-                       (array-dimensions ,result)))
+                       (array-dimensions ,result-tmp)))
            (error "~S and ~S have different dimensions" ',(first variables) ',result))
        
        (dotimes (,indx ,size)
@@ -292,7 +292,7 @@ as rank 0 arrays, following the usual semantics."
          (let ,(mapcar (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
            ;; User-supplied function body now evaluated for each index in turn
            (setf (row-major-aref ,result-tmp ,indx) (coerce (progn ,@body) ,type))))
-       ,result)))
+       ,result-tmp)))
 
 (defmacro vectorize* (element-type variables &body body)
   "Makes a new array of type ELEMENT-TYPE, containing the result of
