@@ -82,7 +82,8 @@
    #:each-index
    #:each-index*
    #:each-index!
-   #:sum-index)
+   #:sum-index
+   #:reduce-index)
   (:export ; stack
    #:copy-row-major-block
    #:stack-rows-copy

@@ -493,6 +493,34 @@
     (assert-condition error
         (aops:sum-index i (aref B i i)))))
     
+(deftest reduce-index (tests)
+  (let ((A #2A((1 2) (3 4)))
+        (B #2A((1 2 3) (4 5 6))))
+    
+    ;; Sum all elements
+    (assert-equalp
+        10
+        (aops:reduce-index #'+ i (row-major-aref A i)))
+
+    ;; Multiply all elements using AREF
+    (assert-equalp
+        24
+        (aops:reduce-index #'* (i j) (aref A i j)))
+
+    ;; Trace of array
+    (assert-equalp
+        5
+        (aops:reduce-index #'+ i (aref A i i)))
+
+    ;; Maximum in an array
+    (assert-equalp
+        4
+        (aops:reduce-index #'max j (row-major-aref A j)))
+    
+    ;; Checks incompatible dimensions
+    (assert-condition error
+        (aops:reduce-index #'+ i (aref B i i)))))
+
 
 ;;; stack
 

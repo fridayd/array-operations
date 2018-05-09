@@ -1,8 +1,9 @@
 (in-package #:array-operations)
 
 (defun find-array-dimensions (expr)
-  "Walks an expression tree EXPR, finds AREF and ROW-MAJOR-AREF calls. 
-   Returns a list of (symbol, expr)
+  "Walks an expression tree EXPR, finds AREF and ROW-MAJOR-AREF, SVREF or ELT calls. 
+   Returns a list of (symbol, expr) where EXPR is an expression which
+   evaluates to the array dimension size for SYMBOL.
 
    Example: 
      (find-array-dimensions '(+ (aref a i) (* 2 (aref b j k))))
@@ -317,3 +318,75 @@
          ,@checks-list
          ,result))))
 
+(defmacro reduce-index (function index &body body)
+  "Reduction over one or more INDEX symbols in an array expression.
+   The range of these symbols is determined by walking the tree
+   for AREF and ROW-MAJOR-AREF calls.
+
+  Example:
+
+   (defparameter A #2A((1 2) (3 4)))
+   
+   (reduce-index #'+ i (row-major-aref A i))  ; Sum all elements (sum-index)
+   => 10
+
+   (reduce-index #'* (i j) (aref A i j))  ; Multiply all elements
+   => 24
+   
+   (reduce-index #'max i (row-major-aref A i)) ; Maxmum value
+   => 4
+  "
+  (let ((dim-exprs (find-array-dimensions body))
+        (index (if (listp index) index
+                   (list index))))  ; Ensure that INDEX is a list
+    ;; Check that all elements of INDEX are symbols
+    (dolist (sym index)
+      (unless (symbolp sym) (error "Index must be a symbol ~S" sym)))
+
+    (let ((index-sizes (loop for i from 0 below (length index) collecting (gensym)))
+          (let-list nil)   ; let environment
+          (checks-list nil))  ; Array size checks
+      
+      (loop for sym in (reverse index) for size in index-sizes do
+         ;; Add a dimension to be set in the `let` environment
+         ;; Find an expression which sets the range of SYM
+           (let ((dim-expr (assoc sym dim-exprs)))
+             (unless dim-expr (error "Cannot determine range of index ~S" sym))
+             (push (list size (rest dim-expr)) let-list)
+             ;; Check that dimensions are consistent
+             ;; Get list of dimension expressions
+             
+             (dolist (expr (cdr (remove-if-not (lambda (it) (eq it sym))
+                                               dim-exprs :key #'car)))
+               (push `(unless (= ,(rest expr) ,size)
+                        (error "Incompatible sizes for index ~S : ~S and ~S" ',sym ,(rest dim-expr) ,(rest expr)))
+                     checks-list))))
+      
+      (let ((gnext (gensym))  ; Tagbody symbols
+            (grun (gensym))
+            (gdone (gensym))
+            (result (gensym))) ; Reduced result
+        
+        `(let ,let-list  ; Get dimension sizes
+           ,@checks-list ; Check that they are consistent
+           
+           (let ,(loop for sym in index collecting (list sym 0)) ; All indices 0
+             (let ((,result (progn ,@body))) ; Evaluate expression as starting result
+               (tagbody
+                  ,gnext
+                  ;; Increment indices, starting with innermost.
+                  ,@(loop for sym in (reverse index) for size in index-sizes
+                       append `((when (< (incf ,sym) ,size)  ; While in range
+                                  (go ,grun))
+                                (setf ,sym 0))) ; Reset index, fall through to increment next index
+                  (go ,gdone) ; Reached the end, no more indices to increment
+                  ,grun
+                  ;; Perform reduction
+                  (setf ,result (funcall ,function ,result (progn ,@body)))
+                  (go ,gnext)
+                  ,gdone)
+               ,result)))))))
+
+
+       
+        
