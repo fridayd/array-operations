@@ -126,7 +126,7 @@
   (let ((delta (/ (- stop start) (- n 1))) ; Difference between values
         (result (make-array n :element-type element-type)))
     (dotimes (i n)
-      (setf (aref result i) (coerce (* delta i) element-type)))
+      (setf (aref result i) (coerce (+ start (* delta i)) element-type)))
     result))
 
 (defun linspace (start stop n)

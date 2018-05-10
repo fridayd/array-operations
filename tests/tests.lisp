@@ -106,7 +106,7 @@
 
 (deftest linspace (tests)
   (assert-equalp #(0 1 2 3) (aops:linspace 0 3 4))
-  (assert-equalp #(0 1/2 1 3/2 2) (aops:linspace 1 3 5))
+  (assert-equalp #(1 3/2 2 5/2 3) (aops:linspace 1 3 5))
   (assert-equalp #(0.0d0 2.0d0 4.0d0) (aops:linspace 0 4d0 3)))
 
 (deftest similar-array (tests)
