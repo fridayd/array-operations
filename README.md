@@ -21,10 +21,10 @@ Arrays can be manipulated:
 (defparameter A #2A((1 2) (3 4)))
 (defparameter B #2A((2 3) (4 5)))
 
-;; Split along any dimension
+;; split along any dimension
 (aops:split A 1)  ; => #(#(1 2) #(3 4))
 
-;; Stack along any dimension
+;; stack along any dimension
 (aops:stack 1 A B) ; => #2A((1 2 2 3) (3 4 4 5))
 
 ;; element-wise function map
