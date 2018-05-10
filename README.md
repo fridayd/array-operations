@@ -16,16 +16,16 @@ For example, arrays can be created:
 (generate #'identity '(2 3) :position) ; => #2A((0 1 2) (3 4 5))
 ```
 
-Arrays can be manipulated:
+and manipulated:
 ```commonlisp
 (defparameter A #2A((1 2) (3 4)))
 (defparameter B #2A((2 3) (4 5)))
 
 ;; split along any dimension
-(aops:split A 1)  ; => #(#(1 2) #(3 4))
+(split A 1)  ; => #(#(1 2) #(3 4))
 
 ;; stack along any dimension
-(aops:stack 1 A B) ; => #2A((1 2 2 3) (3 4 4 5))
+(stack 1 A B) ; => #2A((1 2 2 3) (3 4 4 5))
 
 ;; element-wise function map
 (each #'+ #(0 1 2) #(2 3 5)) ; => #(2 4 7)
