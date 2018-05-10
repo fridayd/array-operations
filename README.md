@@ -46,14 +46,14 @@ Shorthand for frequently used Common Lisp array functions
 The library defines the following short function names that are synomyms
 for Common Lisp operations:
 
-  array-operations   Common Lisp
-  ------------------ -------------------------------
-  size               array-total-size
-  rank               array-rank
-  dim                array-dimension
-  dims               array-dimensions
-  nrow               *number of rows in matrix*
-  ncol               *number of columns in matrix*
+  array-operations   | Common Lisp
+  ------------------ | -------------------------------
+  size               | array-total-size
+  rank               | array-rank
+  dim                | array-dimension
+  dims               | array-dimensions
+  nrow               | *number of rows in matrix*
+  ncol               | *number of columns in matrix*
 
 The `array-operations` package has the nickname `aops`, so you can use,
 for example, `(aops:size my-array)` without `use`'ing the package.
@@ -82,7 +82,7 @@ library also provides `displace` for that purpose:
   (aops:displace *a* 2 1) ; => #(2 3)
 ```
 
-=flatten= displaces to a row-major array:
+**`flatten`** displaces to a row-major array:
 
 ``` {.commonlisp}
   (aops:flatten *a*) ; => #(1 2 3 4 5 6)
@@ -115,7 +115,7 @@ elements that would start with given subscripts:
 
 There is also a `(setf sub)` function.
 
-=partition= returns a consecutive chunk of an array separated along its
+**`partition`** returns a consecutive chunk of an array separated along its
 first subscript:
 
 ``` {.commonlisp}
@@ -129,13 +129,13 @@ first subscript:
 
 and also has a `(setf partition)` pair.
 
-=combine= is the opposite of `split`:
+**`combine`** is the opposite of `split`:
 
 ``` {.commonlisp}
   (aops:combine #(#(0 1) #(2 3))) ; => #2A((0 1) (2 3))
 ```
 
-=subvec= returns a displaced subvector:
+**`subvec`** returns a displaced subvector:
 
 ``` {.commonlisp}
   (aops:subvec #(0 1 2 3 4) 2 4) ; => #(2 3)
@@ -144,7 +144,7 @@ and also has a `(setf partition)` pair.
 There is also a `(setf subvec)` function, which is like `(setf subseq)`
 except for demanding matching lengths.
 
-Finally, `reshape` can be used to displace arrays into a different
+Finally, **`reshape`** can be used to displace arrays into a different
 shape:
 
 ``` {.commonlisp}
@@ -158,7 +158,7 @@ automatically:
   (aops:reshape *b* '(1 t)) ; => #2A((0 1 2 3 4 5 6 7))
 ```
 
-=reshape-col= and `reshape-row` reshape your array into a column or row
+**`reshape-col`** and **`reshape-row`** reshape your array into a column or row
 matrix, respectively.
 
 Dimension specifications
@@ -194,7 +194,7 @@ other assumes it is `t`. The former ends with a `*`, and the
 versions without `*`, use the other when you are optimizing your code
 and you are sure you can constrain to a given element-type.
 
-\*Element traversal order of these functions is unspecified\*. The
+*Element traversal order of these functions is unspecified*. The
 reason for this is that the library may use parallel code in the future,
 so it is unsafe to rely on a particular element traversal order.
 
@@ -202,15 +202,15 @@ The following functions all make a new array, taking the dimensions as
 input. The version ending in `*` also takes the array type as first
 argument
 
-  Function   Description
-  ---------- ------------------------------------------------------------------
-  zeros      Filled with zeros
-  ones       Filled with ones
-  rand       Filled with uniformly distrubuted random numbers between 0 and 1
-  randn      Normally distributed with mean 0 and standard deviation 1
-  linspace   Evenly spaced numbers in given range
+  Function   | Description
+  ---------- | ------------------------------------------------------------------
+  zeros      | Filled with zeros
+  ones       | Filled with ones
+  rand       | Filled with uniformly distrubuted random numbers between 0 and 1
+  randn      | Normally distributed with mean 0 and standard deviation 1
+  linspace   | Evenly spaced numbers in given range
 
-=generate= (and `generate*`) allow you to generate arrays using
+**`generate`** (and `generate*`) allow you to generate arrays using
 functions.
 
 ``` {.commonlisp}
@@ -225,7 +225,7 @@ functions.
 Depending on the last argument, the function will be called with the
 (row-major) position, the subscripts, both, or no argument.
 
-=permute= can permutate subscripts (you can also invert, complement, and
+**`permute**` can permutate subscripts (you can also invert, complement, and
 complete permutations, look at the docstring and the unit tests).
 Transposing is a special case of permute:
 
@@ -235,13 +235,13 @@ Transposing is a special case of permute:
   (aops:permute '(1 0) *a*) ; => #2A((1 4) (2 5) (3 6))
 ```
 
-=each= applies a function to its (array) arguments elementwise:
+**`each`** applies a function to its (array) arguments elementwise:
 
 ``` {.commonlisp}
   (aops:each #'+ #(0 1 2) #(2 3 5)) ; => #(2 4 7)
 ```
 
-=vectorize= is a macro which performs elementwise operations
+**`vectorize`** is a macro which performs elementwise operations
 
 ``` {.commonlisp}
   (defparameter a #(1 2 3 4))
@@ -255,7 +255,7 @@ There is also a version `vectorize*` which takes a type argument for the
 resulting array, and a version `vectorize!` which sets elements in a
 given array.
 
-The semantics of `margin` are more difficult to explain, so perhaps an
+The semantics of **`margin`** are more difficult to explain, so perhaps an
 example will be more useful. Suppose that you want to calculate column
 sums in a matrix. You could `permute` (transpose) the matrix, `split`
 its subarrays at rank one (so you get a vector for each row), and apply
@@ -272,7 +272,7 @@ the function that calculates the sum. `margin` automates that for you:
 But the function is much more general than this: the arguments `inner`
 and `outer` allow arbitrary permutations before splitting.
 
-Finally, `recycle` allows you to recycle arrays along inner and outer
+Finally, **`recycle`** allows you to recycle arrays along inner and outer
 dimensions:
 
 ``` {.commonlisp}
@@ -283,7 +283,7 @@ dimensions:
 Indexing operations
 -------------------
 
-=nested-loop= is a simple macro which iterates over a set of indices
+**`nested-loop`** is a simple macro which iterates over a set of indices
 with a given range
 
 ``` {.commonlisp}
@@ -297,7 +297,7 @@ with a given range
     (format t "(~a ~a) " i j)) ; => (0 0) (0 1) (0 2) (1 0) (1 1) (1 2) 
 ```
 
-=sum-index= is a macro which uses a code walker to determine the
+**`sum-index`** is a macro which uses a code walker to determine the
 dimension sizes, summing over the given index or indices
 
 ``` {.commonlisp}
@@ -315,7 +315,7 @@ dimension sizes, summing over the given index or indices
 
 The main use for `sum-index` is in combination with `each-index`.
 
-=each-index= is a macro which creates an array and iterates over the
+**`each-index`** is a macro which creates an array and iterates over the
 elements. Like `sum-index` it is given one or more index symbols, and
 uses a code walker to find array dimensions.
 
@@ -349,7 +349,7 @@ vector:
   (reduce #'max (aops:flatten a)) ; => 4
 ```
 
-=argmax= and `argmin` find the `row-major-aref` index where an array is
+**`argmax`** and **`argmin`** find the `row-major-aref` index where an array is
 maximum or minimum. They both return two values: the first value is the
 index; the second is the array value at that index.
 
@@ -359,7 +359,7 @@ index; the second is the array value at that index.
   (aops:argmin a) ; => 0 1
 ```
 
-More complicated reductions can be done with `aops:vectorize-reduce`,
+More complicated reductions can be done with **`vectorize-reduce`**,
 for example the maximum absolute difference between arrays:
 
 ``` {.commonlisp}
