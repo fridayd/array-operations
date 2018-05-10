@@ -2,8 +2,45 @@ Introduction
 ============
 
 This library is a collection of functions and macros for manipulating
-Common Lisp arrays and performing numerical calculations with them. It
-is mainly intended to be convenient and portable, rather than fast.
+Common Lisp arrays and performing numerical calculations with them. 
+
+For example, arrays can be created:
+```commonlisp
+;; uniform and normal random numbers
+(rand '(2 2)) ; => #2A((0.62944734 0.2709539) (0.81158376 0.6700171))
+
+;; linear ranges
+(linspace 1 10 7) ; => #(1 5/2 4 11/2 7 17/2 10)
+
+;; Using a function, optionally given index position
+(generate #'identity '(2 3) :position) ; => #2A((0 1 2) (3 4 5))
+```
+
+Arrays can be manipulated:
+```commonlisp
+(defparameter A #2A((1 2) (3 4)))
+(defparameter B #2A((2 3) (4 5)))
+
+;; Split along any dimension
+(aops:split A 1)  ; => #(#(1 2) #(3 4))
+
+;; Stack along any dimension
+(aops:stack 1 A B) ; => #2A((1 2 2 3) (3 4 4 5))
+
+;; element-wise function map
+(each #'+ #(0 1 2) #(2 3 5)) ; => #(2 4 7)
+
+;; element-wise expressions
+(vectorize (A B) (* A (sqrt B))) ; => #2A((1.4142135 3.4641016) (6.0 8.944272))
+
+;; index operations e.g. matrix-matrix multiply:
+(each-index (i j)
+  (sum-index k
+    (* (aref A i k) (aref B k j)))) ; => #2A((10 13) (22 29))
+```
+
+Installation
+============
 
 A version of this library is on QuickLisp, based on the [original
 library](https://github.com/tpapp/array-operations). The QuickLisp
@@ -16,14 +53,7 @@ version has some but not all functionality of this fork: It includes the
   (ql:quickload :array-operations)
 ```
 
-To run the test suite (using [clunit](https://github.com/tgutu/clunit)):
-
-``` {.commonlisp}
-  (ql:quickload :array-operations-tests)
-  (array-operations-tests:run)
-```
-
-This fork keeps these functions, and adds `each-index`, `sum-index`,
+This fork keeps these functions, and adds `each-index`, `sum-index`, `reduce-index`,
 `vectorize`, `vectorize-reduce`, `nested-loop`, `zeros`, `ones`, `rand`,
 `randn`, `linspace`, `argmax` and `argmin`. To install, clone into your
 Quicklisp local project directory:
@@ -31,11 +61,14 @@ Quicklisp local project directory:
 ``` {.bash}
   $ git clone https://github.com/bendudson/array-operations.git ~/quicklisp/local-projects/
 ```
-
 Then load as above with `(ql:quickload :array-operations)`.
 
-This library has limitations, and almost certainly bugs. Issues,
-contributions and pull requests welcome!
+To run the test suite (using [clunit](https://github.com/tgutu/clunit)):
+
+``` {.commonlisp}
+  (ql:quickload :array-operations-tests)
+  (array-operations-tests:run)
+```
 
 A quick tour of the library
 ===========================
@@ -225,7 +258,7 @@ functions.
 Depending on the last argument, the function will be called with the
 (row-major) position, the subscripts, both, or no argument.
 
-**`permute**` can permutate subscripts (you can also invert, complement, and
+**`permute`** can permutate subscripts (you can also invert, complement, and
 complete permutations, look at the docstring and the unit tests).
 Transposing is a special case of permute:
 
@@ -337,6 +370,21 @@ uses a code walker to find array dimensions.
         (* (aref A i k) (aref B k j)))) ; => #2A((19 22) (43 50))
 ```
 
+**`reduce-index`** is a more general version of `sum-index`, which
+applies a reduction operation over one or more indices. 
+
+```commonlisp
+  (defparameter A #2A((1 2) (3 4)))
+  
+  ;; Sum all values in an array
+  (aops:reduce-index #'+ i (row-major-aref A i)) ; => 10
+  
+  ;; Maximum value in each row
+  (aops:each-index i
+    (aops:reduce-index #'max j
+      (aref A i j)))  ; => #(2 4)
+```
+
 Reductions
 ----------
 
@@ -368,6 +416,8 @@ for example the maximum absolute difference between arrays:
 
   (aops:vectorize-reduce #'max (a b) (abs (- a b))) ; => 2
 ```
+
+See also `reduce-index` above.
 
 Scalars as 0-dimensional arrays
 -------------------------------
