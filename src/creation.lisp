@@ -5,6 +5,20 @@
 
 (in-package #:array-operations)
 
+(defun fill! (array value)
+  "Fills a given ARRAY with VALUE, coerced to the same element type as ARRAY"
+  (let ((size (array-total-size array))
+        (value-of-type (coerce value
+                               (array-element-type array))))
+    (dotimes (i size)
+      (setf (row-major-aref array i) value-of-type))
+    array))
+
+(defun zeros! (array)
+  "Fills the given ARRAY with zero values, coerced to the element type. 
+Returns ARRAY."
+  (fill! array 0))
+
 (defun zeros* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with zeros
    coerced to the specified type ELEMENT-TYPE."
@@ -17,6 +31,11 @@
   (make-array (ensure-dimensions dimensions)
               :initial-element 0))
 
+(defun ones! (array)
+  "Fills the given ARRAY with 1's, coerced to the element type. 
+Returns ARRAY."
+  (fill! array 1))
+
 (defun ones* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with ones
    coerced to the specified type ELEMENT-TYPE."
@@ -28,6 +47,17 @@
   "Makes an array of shape DIMENSIONS and type T, filled with ones"
   (make-array (ensure-dimensions dimensions)
               :initial-element 1))
+
+(defun rand! (array)
+  "Fills a given ARRAY with random numbers,
+uniformly distributed between 0 and 1. 
+Uses the built-in RANDOM function.
+Returns ARRAY."
+  (let ((size (array-total-size array))
+        (element-type (array-element-type array)))
+    (dotimes (i size)
+      (setf (row-major-aref array i) (coerce (random 1.0) element-type))))
+  array)
 
 (defun rand* (element-type dimensions)
   "Makes an array of shape DIMENSIONS and type ELEMENT-TYPE, filled with random numbers
@@ -42,12 +72,8 @@
    (e.g. cryptographic applications), then you should probably
    not use this function.
    "
-  (let* ((arr (make-array (ensure-dimensions dimensions)
-                          :element-type element-type))
-         (size (array-total-size arr)))
-    (dotimes (i size)
-      (setf (row-major-aref arr i) (coerce (random 1.0) element-type)))
-    arr))
+  (rand! (make-array (ensure-dimensions dimensions)
+                     :element-type element-type)))
 
 (defun rand (dimensions)
   "Makes an array of shape DIMENSIONS and type T, filled with random numbers
@@ -64,6 +90,40 @@
    "
   (rand* t dimensions))
 
+(defun randn! (array)
+  "Fills ARRAY with normally distributed numbers
+   with a mean of zero and standard deviation of 1
+
+   Uses the Box-Muller algorithm and built-in random number generator.
+
+   NOTE: If it's important that these numbers are really random
+   (e.g. cryptographic applications), then you should probably
+   not use this function.
+   "
+  (let ((element-type (array-element-type array))
+        (size (array-total-size array)))
+    (do ((i 0 (+ 2 i)))
+        ((>= i (- size 1)))   
+      ;; Box-Muller algorithm
+      ;; Generate two uniform random numbers, u1 and u2
+      ;;
+      ;;  r = sqrt(-2 log(u1))
+      ;; then two normally-distributed numbers are
+      ;;  z0 = r * cos(2pi u2)
+      ;;  z1 = r * sin(2pi u2)
+      (let* ((u1 (random 1.0))
+             (2piu2 (* 2 pi (random 1.0))) ; 2 * pi * u2
+             (r (sqrt (* -2 (log u1)))))
+        (setf (row-major-aref array i) (coerce (* r (cos 2piu2)) element-type))
+        (setf (row-major-aref array (1+ i)) (coerce (* r (sin 2piu2)) element-type))))
+    ;; If size is odd then one extra random number is needed
+    (if (not (zerop (logand size 1)))
+        (let* ((u1 (random 1.0))
+               (2piu2 (* 2 pi (random 1.0)))
+               (r (sqrt (* -2 (log u1)))))
+          (setf (row-major-aref array (1- size)) (coerce (* r (cos 2piu2)) element-type))))
+    array))
+
 (defun randn* (element-type dimensions)
   "Creates an array of shape DIMENSIONS and type ELEMENT-TYPE,
    and fills with normally distributed numbers
@@ -78,30 +138,8 @@
    (e.g. cryptographic applications), then you should probably
    not use this function.
    "
-  (let* ((arr (make-array (ensure-dimensions dimensions)
-                          :element-type element-type))
-         (size (array-total-size arr)))
-    (do ((i 0 (+ 2 i)))
-        ((>= i (- size 1)))   
-      ;; Box-Muller algorithm
-      ;; Generate two uniform random numbers, u1 and u2
-      ;;
-      ;;  r = sqrt(-2 log(u1))
-      ;; then two normally-distributed numbers are
-      ;;  z0 = r * cos(2pi u2)
-      ;;  z1 = r * sin(2pi u2)
-      (let* ((u1 (random 1.0))
-             (2piu2 (* 2 pi (random 1.0))) ; 2 * pi * u2
-             (r (sqrt (* -2 (log u1)))))
-        (setf (row-major-aref arr i) (coerce (* r (cos 2piu2)) element-type))
-        (setf (row-major-aref arr (1+ i)) (coerce (* r (sin 2piu2)) element-type))))
-    ;; If size is odd then one extra random number is needed
-    (if (not (zerop (logand size 1)))
-        (let* ((u1 (random 1.0))
-               (2piu2 (* 2 pi (random 1.0)))
-               (r (sqrt (* -2 (log u1)))))
-          (setf (row-major-aref arr (1- size)) (coerce (* r (cos 2piu2)) element-type))))
-    arr))
+  (randn! (arr (make-array (ensure-dimensions dimensions)
+                           :element-type element-type))))
 
 (defun randn (dimensions)
   "Creates an array of shape DIMENSIONS and type T,
@@ -119,15 +157,23 @@
    "
   (randn* t dimensions))
 
+(defun linspace! (array start stop)
+  "Fill an array with evenly spaced numbers over an interval.
+   The first element is equal to START and last element STOP, 
+   with constant difference between consecutive elements in ROW-MAJOR-INDEX."
+  (let* ((size (array-total-size array))
+         (element-type (array-element-type array))
+         (delta (/ (- stop start) (- size 1)))) ; Difference between values
+    
+    (dotimes (i size)
+      (setf (row-major-aref array i) (coerce (+ start (* delta i)) element-type)))
+    array))
+
 (defun linspace* (element-type start stop n)
   "Make a vector of N elements and type ELEMENT-TYPE, containing evenly spaced numbers over an interval.
    The first element is equal to START and last element STOP, 
    with constant difference between consecutive elements."
-  (let ((delta (/ (- stop start) (- n 1))) ; Difference between values
-        (result (make-array n :element-type element-type)))
-    (dotimes (i n)
-      (setf (aref result i) (coerce (+ start (* delta i)) element-type)))
-    result))
+  (linspace! (make-array n :element-type element-type) start stop))
 
 (defun linspace (start stop n)
   "Make a vector of N elements and type T, containing evenly spaced numbers over an interval.

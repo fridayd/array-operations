@@ -9,16 +9,22 @@
   (:nicknames #:aops)
   (:shadow #:flatten)
   (:export ; creation
+   #:fill!
    #:zeros
    #:zeros*
+   #:zeros!
    #:ones
    #:ones*
+   #:ones!
    #:rand
    #:rand*
+   #:rand!
    #:randn
    #:randn*
+   #:randn!
    #:linspace
    #:linspace*
+   #:linspace!
    #:similar-array)
   (:export ; utilities
    #:walk-subscripts
@@ -51,7 +57,6 @@
    #:reshape-col
    #:reshape-row)
   (:export ; transformations
-   #:fill!
    #:coercing
    #:generate*
    #:generate
