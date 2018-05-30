@@ -34,6 +34,14 @@
     (assert-equalp '(simple-array double-float (2 2)) (type-of result))
     (assert-equalp 0d0 (aref result 1 1))))
 
+(deftest zeros! (tests)
+  (let ((array (make-array '(2 3)
+                           :element-type 'single-float
+                           :initial-element 1.2)))
+    (aops:zeros! array)
+    (dotimes (i (array-total-size array))  
+      (assert-equalp 0s0 (row-major-aref array i)))))
+
 (deftest ones (tests)
   (let ((result (aops:ones 4)))
     (assert-equalp '(simple-vector 4) (type-of result))
@@ -54,6 +62,14 @@
     (assert-equalp '(simple-array double-float (2 2)) (type-of result))
     (assert-equalp 1d0 (aref result 1 1))))
 
+(deftest ones! (tests)
+  (let ((array (make-array 3
+                           :element-type 'integer
+                           :initial-element 3)))
+    (aops:ones! array)
+    (dotimes (i (array-total-size array))  
+      (assert-equalp 1 (row-major-aref array i)))))
+
 (deftest rand (tests)
   (let ((a (aops:rand 3)))
     (assert-equalp '(3) (array-dimensions a))
@@ -66,6 +82,15 @@
     (assert-true (>= c-min 0.0))
     (assert-true (<= c-max 1.0))
     (assert-true (> c-max c-min))))
+
+(deftest rand! (tests)
+  (let ((array (make-array 3
+                           :element-type 'double-float
+                           :initial-element 3d0)))
+    (aops:rand! array)
+    (assert-false (= (aref array 1) (aref array 2)))
+    (assert-true (>= (reduce #'min array) 0.0))
+    (assert-true (<= (reduce #'max array) 1.0))))
 
 (deftest rand* (tests)
   (let ((a (aops:rand* 'double-float 3)))
@@ -104,10 +129,23 @@
     (assert-true (< c-min 0.0))
     (assert-true (> c-max 0.0))))
 
+(deftest randn! (tests)
+  (let ((a (make-array '(2 2) :element-type 'single-float)))
+    (let ((b (aops:randn! a)))
+      (assert-equalp a b)
+      (assert-false (= (aref a 0 1) (aref a 1 1))))))
+
 (deftest linspace (tests)
   (assert-equalp #(0 1 2 3) (aops:linspace 0 3 4))
   (assert-equalp #(1 3/2 2 5/2 3) (aops:linspace 1 3 5))
   (assert-equalp #(0.0d0 2.0d0 4.0d0) (aops:linspace 0 4d0 3)))
+
+(deftest linspace! (tests)
+  (let ((a (make-array 5 :element-type 'single-float)))
+    (aops:linspace! a 1 5)
+    (assert-equalp #(1 2 3 4 5) a)
+    (aops:linspace! a 0 1)
+    (assert-equalp #(0.0 0.25 0.5 0.75 1.0) a)))
 
 (deftest similar-array (tests)
   (let* ((a #(1 2 3 4))

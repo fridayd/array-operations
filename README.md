@@ -233,7 +233,8 @@ so it is unsafe to rely on a particular element traversal order.
 
 The following functions all make a new array, taking the dimensions as
 input. The version ending in `*` also takes the array type as first
-argument
+argument. There are also versions ending in `!` which do not make a
+new array, but take an array as first argument, which is modified and returned. 
 
   Function   | Description
   ---------- | ------------------------------------------------------------------
@@ -242,6 +243,18 @@ argument
   rand       | Filled with uniformly distrubuted random numbers between 0 and 1
   randn      | Normally distributed with mean 0 and standard deviation 1
   linspace   | Evenly spaced numbers in given range
+
+For example:
+```{.commonlisp}
+  (aops:rand '(2 2))  ; => #2A((0.6686077 0.59425664) (0.7987722 0.6930506))
+
+  (aops:rand* 'single-float '(2 2)) ; => #2A((0.39332366 0.5557821) (0.48831415 0.10924244))
+
+  (let ((a (make-array '(2 2) :element-type 'double-float)))
+    ;; Modify array A, filling with random numbers
+    (aops:rand! a))  ; => #2A((0.6324615478515625d0 0.4636608362197876d0)
+                              (0.4145939350128174d0 0.5124958753585815d0))
+```
 
 **`generate`** (and `generate*`) allow you to generate arrays using
 functions.

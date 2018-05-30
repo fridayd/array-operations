@@ -138,8 +138,8 @@ Returns ARRAY."
    (e.g. cryptographic applications), then you should probably
    not use this function.
    "
-  (randn! (arr (make-array (ensure-dimensions dimensions)
-                           :element-type element-type))))
+  (randn! (make-array (ensure-dimensions dimensions)
+                      :element-type element-type)))
 
 (defun randn (dimensions)
   "Creates an array of shape DIMENSIONS and type T,
