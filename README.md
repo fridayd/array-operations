@@ -5,7 +5,7 @@ This library is a collection of functions and macros for manipulating
 Common Lisp arrays and performing numerical calculations with them. 
 
 For example, arrays can be created:
-```commonlisp
+```common-lisp
 ;; uniform and normal random numbers
 (rand '(2 2)) ; => #2A((0.62944734 0.2709539) (0.81158376 0.6700171))
 
@@ -16,8 +16,8 @@ For example, arrays can be created:
 (generate #'identity '(2 3) :position) ; => #2A((0 1 2) (3 4 5))
 ```
 
-and manipulated:
-```commonlisp
+Arrays can be manipulated:
+```common-lisp
 (defparameter A #2A((1 2) (3 4)))
 (defparameter B #2A((2 3) (4 5)))
 
@@ -49,7 +49,7 @@ version has some but not all functionality of this fork: It includes the
 `combine`, `sub`, `partition`, `stack`, `reshape`, `margin` and
 `recycle` functions.
 
-``` {.commonlisp}
+```common-lisp
   (ql:quickload :array-operations)
 ```
 
@@ -65,7 +65,7 @@ Then load as above with `(ql:quickload :array-operations)`.
 
 To run the test suite (using [clunit](https://github.com/tgutu/clunit)):
 
-``` {.commonlisp}
+```common-lisp
   (ql:quickload :array-operations-tests)
   (array-operations-tests:run)
 ```
@@ -110,21 +110,21 @@ former in the latter is called the *offset* of the displacement.
 Displaced arrays are usually constructed using `make-array`, but this
 library also provides `displace` for that purpose:
 
-``` {.commonlisp}
+```common-lisp
   (defparameter *a* #2A((1 2 3) (4 5 6)))
   (aops:displace *a* 2 1) ; => #(2 3)
 ```
 
 **`flatten`** displaces to a row-major array:
 
-``` {.commonlisp}
+```common-lisp
   (aops:flatten *a*) ; => #(1 2 3 4 5 6)
 ```
 
 The real fun starts with `split`, which splits off subarrays nested
 within a given axis:
 
-``` {.commonlisp}
+```common-lisp
   (aops:split *a* 1) ; => #(#(1 2 3) #(4 5 6))
   (defparameter *b* #3A(((0 1) (2 3))
                         ((4 5) (6 7))))
@@ -140,7 +140,7 @@ itself.
 Now consider `sub`, which returns a specific array, composed of the
 elements that would start with given subscripts:
 
-``` {.commonlisp}
+```common-lisp
   (aops:sub *b* 0) ; => #2A((0 1) (2 3))
   (aops:sub *b* 0 1) ; => #(2 3)
   (aops:sub *b* 0 1 0) ; => 2
@@ -151,7 +151,7 @@ There is also a `(setf sub)` function.
 **`partition`** returns a consecutive chunk of an array separated along its
 first subscript:
 
-``` {.commonlisp}
+```common-lisp
   (aops:partition #2A((0 1)
                     (2 3)
                     (4 5)
@@ -164,13 +164,13 @@ and also has a `(setf partition)` pair.
 
 **`combine`** is the opposite of `split`:
 
-``` {.commonlisp}
+```common-lisp
   (aops:combine #(#(0 1) #(2 3))) ; => #2A((0 1) (2 3))
 ```
 
 **`subvec`** returns a displaced subvector:
 
-``` {.commonlisp}
+```common-lisp
   (aops:subvec #(0 1 2 3 4) 2 4) ; => #(2 3)
 ```
 
@@ -180,14 +180,14 @@ except for demanding matching lengths.
 Finally, **`reshape`** can be used to displace arrays into a different
 shape:
 
-``` {.commonlisp}
+```common-lisp
   (aops:reshape *a* '(3 2)) ; => #2A((1 2) (3 4) (5 6))
 ```
 
 You can use `t` for one of the dimensions, to be filled in
 automatically:
 
-``` {.commonlisp}
+```common-lisp
   (aops:reshape *b* '(1 t)) ; => #2A((0 1 2 3 4 5 6 7))
 ```
 
@@ -206,13 +206,13 @@ Functions in the library accept the following in place of dimensions:
 The last one allows you to specify dimensions with other arrays. For
 example, to reshape an array `a1` to look like `a2`, you can use
 
-``` {.commonlisp}
+```common-lisp
   (aops:reshape a1 a2)
 ```
 
 instead of the longer form
 
-``` {.commonlisp}
+```common-lisp
   (aops:reshape a1 (aops:dims a2))
 ```
 
@@ -259,7 +259,7 @@ For example:
 **`generate`** (and `generate*`) allow you to generate arrays using
 functions.
 
-``` {.commonlisp}
+```common-lisp
   (aops:generate (lambda () (random 10)) 3) ; => #(6 9 5)
   (aops:generate #'identity '(2 3) :position) ; => #2A((0 1 2) (3 4 5))
   (aops:generate #'identity '(2 2) :subscripts)
@@ -275,7 +275,7 @@ Depending on the last argument, the function will be called with the
 complete permutations, look at the docstring and the unit tests).
 Transposing is a special case of permute:
 
-``` {.commonlisp}
+```common-lisp
   (defparameter *a* #2A((1 2 3) (4 5 6)))
   (aops:permute '(0 1) *a*) ; => #2A((1 2 3) (4 5 6))
   (aops:permute '(1 0) *a*) ; => #2A((1 4) (2 5) (3 6))
@@ -283,13 +283,13 @@ Transposing is a special case of permute:
 
 **`each`** applies a function to its (array) arguments elementwise:
 
-``` {.commonlisp}
+```common-lisp
   (aops:each #'+ #(0 1 2) #(2 3 5)) ; => #(2 4 7)
 ```
 
 **`vectorize`** is a macro which performs elementwise operations
 
-``` {.commonlisp}
+```common-lisp
   (defparameter a #(1 2 3 4))
   (aops:vectorize (a) (* 2 a)) ; => #(2 4 6 8)
 
@@ -307,7 +307,7 @@ sums in a matrix. You could `permute` (transpose) the matrix, `split`
 its subarrays at rank one (so you get a vector for each row), and apply
 the function that calculates the sum. `margin` automates that for you:
 
-``` {.commonlisp}
+```common-lisp
   (aops:margin (lambda (column)
                (reduce #'+ column))
              #2A((0 1)
@@ -321,7 +321,7 @@ and `outer` allow arbitrary permutations before splitting.
 Finally, **`recycle`** allows you to recycle arrays along inner and outer
 dimensions:
 
-``` {.commonlisp}
+```common-lisp
   (aops:recycle #(2 3) :inner 2 :outer 4)
   ; => #3A(((2 2) (3 3)) ((2 2) (3 3)) ((2 2) (3 3)) ((2 2) (3 3)))
 ```
@@ -332,7 +332,7 @@ Indexing operations
 **`nested-loop`** is a simple macro which iterates over a set of indices
 with a given range
 
-``` {.commonlisp}
+```common-lisp
   (defparameter A #2A((1 2) (3 4)))
 
   (aops:nested-loop (i j) (array-dimensions A)
@@ -346,7 +346,7 @@ with a given range
 **`sum-index`** is a macro which uses a code walker to determine the
 dimension sizes, summing over the given index or indices
 
-``` {.commonlisp}
+```common-lisp
   (defparameter A #2A((1 2) (3 4)))
 
   ;; Trace
@@ -365,7 +365,7 @@ The main use for `sum-index` is in combination with `each-index`.
 elements. Like `sum-index` it is given one or more index symbols, and
 uses a code walker to find array dimensions.
 
-``` {.commonlisp}
+```common-lisp
   (defparameter A #2A((1 2) (3 4)))
   (defparameter B #2A((5 6) (7 8)))
 
@@ -386,7 +386,7 @@ uses a code walker to find array dimensions.
 **`reduce-index`** is a more general version of `sum-index`, which
 applies a reduction operation over one or more indices. 
 
-```commonlisp
+```common-lisp
   (defparameter A #2A((1 2) (3 4)))
   
   ;; Sum all values in an array
@@ -405,7 +405,7 @@ Some reductions over array elements can be done using the CL `reduce`
 function, together with `aops:flatten`, which returns a displaced
 vector:
 
-``` {.commonlisp}
+```common-lisp
   (defparameter a #2A((1 2) (3 4)))
   (reduce #'max (aops:flatten a)) ; => 4
 ```
@@ -414,7 +414,7 @@ vector:
 maximum or minimum. They both return two values: the first value is the
 index; the second is the array value at that index.
 
-``` {.commonlisp}
+```common-lisp
   (defparameter a #(1 2 5 4 2))
   (aops:argmax a) ; => 2 5
   (aops:argmin a) ; => 0 1
@@ -423,7 +423,7 @@ index; the second is the array value at that index.
 More complicated reductions can be done with **`vectorize-reduce`**,
 for example the maximum absolute difference between arrays:
 
-``` {.commonlisp}
+```common-lisp
   (defparameter a #2A((1 2) (3 4)))
   (defparameter b #2A((2 2) (1 3)))
 
@@ -440,7 +440,7 @@ Library functions treat non-array objects as if they were equivalent to
 returns an array that effectively equivalent (`eq`) to array. Another
 example is `recycle`:
 
-``` {.commonlisp}
+```common-lisp
   (aops:recycle 4 :inner '(2 2)) ; => #2A((4 4) (4 4))
 ```
 
@@ -449,7 +449,7 @@ Stacking
 
 You can also stack compatible arrays along any axis:
 
-``` {.commonlisp}
+```common-lisp
   (defparameter *a1* #(0 1 2))
   (defparameter *a2* #(3 5 7))
   (aops:stack 0 *a1* *a2*) ; => #(0 1 2 3 5 7)
