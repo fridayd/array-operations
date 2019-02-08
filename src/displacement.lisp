@@ -69,8 +69,8 @@ with all the other subscripts set to 0, dimensions inferred from the original.
 If no subscripts are given, the original array is returned.  Implemented by
 displacing, may share structure."
   (if subscripts
-      (let+ (((&values offset dimensions)
-              (sub-location% (array-dimensions array) subscripts)))
+      (multiple-value-bind (offset dimensions)
+          (sub-location% (array-dimensions array) subscripts)
         (if dimensions
             (displace array dimensions offset)
             (apply #'aref array subscripts)))
