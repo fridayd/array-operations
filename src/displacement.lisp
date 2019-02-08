@@ -39,7 +39,7 @@ displaced and share structure."
   "Return (values OFFSET REMAINING-DIMENSIONS) that can be used to displace a
 row-major subarray starting at SUBSCRIPTS in an array with the given
 DIMENSIONS.  NOT EXPORTED."
-  (let+ (rev-dimensions
+  (let* (rev-dimensions
          rev-subscripts
          (tail (do ((dimensions dimensions (cdr dimensions))
                     (subscripts subscripts (cdr subscripts)))
@@ -48,7 +48,7 @@ DIMENSIONS.  NOT EXPORTED."
                          "More subscripts than dimensions.")
                  (let ((s (car subscripts))
                        (d (car dimensions)))
-                   (declare (type fixnum d))
+                   (declare (typei fixnum d))
                    (assert (and (integerp s) (< -1 s d)) ()
                            "Invalid subscript.")
                    (push s rev-subscripts)
