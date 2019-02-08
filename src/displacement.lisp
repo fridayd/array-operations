@@ -85,7 +85,8 @@ semantics of SETF easy."
   target)
 
 (defun (setf sub) (value array &rest subscripts)
-  (let+ (((&values subarray atom?) (apply #'sub array subscripts)))
+  (multiple-value-bind (subarray atom?)
+      (apply #'sub array subscripts)
     (if atom?
         (setf (apply #'aref array subscripts) value)
         (copy-into subarray value))))
