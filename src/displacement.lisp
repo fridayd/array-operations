@@ -144,7 +144,7 @@ product equals size.  Also accepts other dimension specifications (integer,
 array)."
   (aetypecase dimensions
     ((integer 0) (assert (= size it)) (list it))
-    (array (assert (= size (rank it))) (dims it))
+    (array (assert (= size (size it))) (dims it))
     (list (let+ (((&flet missing? (dimension) (eq dimension t)))
                  missing
                  (product 1))
