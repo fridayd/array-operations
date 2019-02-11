@@ -240,6 +240,15 @@
       (assert-equalp #(7 9) (setf (aops:subvec b 3 5) #(7 9)))
       (assert-equalp #(0 1 2 7 9 5) b)
       (assert-condition error (setf (aops:subvec b 3 5) #(7))))
+    ;; fill-in-dimensions, a helper function to reshape
+    (assert-equalp '(2) (aops::fill-in-dimensions 2 2))
+    (assert-equalp '(2) (aops::fill-in-dimensions #(1 2) 2))
+    (assert-equalp '(5 4) (aops::fill-in-dimensions '(5 4) 20))
+    (assert-equalp '(5 4) (aops::fill-in-dimensions '(5 t) 20))
+    (assert-condition error (aops::fill-in-dimensions 5 7))
+    (assert-condition error (aops::fill-in-dimensions #(2 3) 7))
+    (assert-condition error (aops::fill-in-dimensions '(2 3) 7))
+    (assert-condition error (aops::fill-in-dimensions '(t t) 7))
     ;; reshape & variances
     (assert-equalp #2A((0 1 2) (3 4 5)) (aops:reshape a '(2 3)))
     (assert-equalp #2A((0 1 2 3 4 5)) (aops:reshape-row a))
