@@ -165,7 +165,9 @@ array)."
                   (mapcar (lambda (dimension)
                             (if (missing? dimension) fraction dimension))
                           dimensions))
-                dimensions)))))
+                (progn
+                  (assert (= size product))
+                  dimensions))))))
 
 (defun reshape (array dimensions &optional (offset 0))
   "Reshape ARRAY using DIMENSIONS (which can also be dimension
