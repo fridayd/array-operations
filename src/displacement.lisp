@@ -145,30 +145,29 @@ array)."
   (aetypecase dimensions
     ((integer 0) (assert (= size it)) (list it))
     (array (assert (= size (size it))) (dims it))
-    (list (let+ (((&flet missing? (dimension) (eq dimension t)))
-                 missing
-                 (product 1))
-            (loop for dimension in dimensions
-                  do (if (missing? dimension)
-                         (progn
-                           (assert (not missing) ()
-                                   "More than one missing dimension.")
-                           (setf missing t))
-                         (progn
-                           (check-type dimension (integer 1))
-                           (multf product dimension))))
-            (if missing
-                (multiple-value-bind (fraction remainder)
-                    (floor size product)
-                  (assert (zerop remainder) ()
-                          "Substitution does not result in an integer ~
-                          dimension.")
-                  (mapcar (lambda (dimension)
-                            (if (missing? dimension) fraction dimension))
-                          dimensions))
-                (progn
-                  (assert (= size product))
-                  dimensions))))))
+    (list (flet ((missing? (dimension) (eq dimension t)))
+            (let ((missing)
+                  (product 1))
+              (loop for dimension in dimensions
+                    do (if (missing? dimension)
+                           (progn
+                             (assert (not missing) ()
+                                     "More than one missing dimension.")
+                             (setf missing t))
+                           (progn
+                             (check-type dimension (integer 1))
+                             (multf product dimension))))
+              (if missing
+                  (multiple-value-bind (fraction remainder)
+                      (floor size product)
+                    (assert (zerop remainder) ()
+                            "Substitution does not result in an integer ~ dimension.")
+                    (mapcar (lambda (dimension)
+                              (if (missing? dimension) fraction dimension))
+                            dimensions))
+                  (progn
+                    (assert (= size product))
+                    dimensions)))))))
 
 (defun reshape (array dimensions &optional (offset 0))
   "Reshape ARRAY using DIMENSIONS (which can also be dimension
