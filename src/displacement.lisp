@@ -158,7 +158,8 @@ array)."
                            (check-type dimension (integer 1))
                            (multf product dimension))))
             (if missing
-                (let+ (((&values fraction remainder) (floor size product)))
+                (multiple-value-bind (fraction remainder)
+                    (floor size product)
                   (assert (zerop remainder) ()
                           "Substitution does not result in an integer ~
                           dimension.")
