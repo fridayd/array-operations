@@ -136,7 +136,6 @@ that element is not an array, the original ARRAY is returned as it is."
   (setf (subseq vector start end) value))
 
 ;;; reshaping
-
 (defun fill-in-dimensions (dimensions size)
   "If one of the dimensions is missing (indicated with T), replace it with a
 dimension so that the total product equals SIZE.  If that's not possible,
@@ -145,7 +144,7 @@ product equals size.  Also accepts other dimension specifications (integer,
 array)."
   (aetypecase dimensions
     ((integer 0) (assert (= size it)) (list it))
-    (array (assert (= size (rank it))) (dims it))
+    (array (assert (= size (size it))) (dims it))
     (list (let+ (((&flet missing? (dimension) (eq dimension t)))
                  missing
                  (product 1))
@@ -166,7 +165,9 @@ array)."
                   (mapcar (lambda (dimension)
                             (if (missing? dimension) fraction dimension))
                           dimensions))
-                dimensions)))))
+                (progn
+                  (assert (= size product))
+                  dimensions))))))
 
 (defun reshape (array dimensions &optional (offset 0))
   "Reshape ARRAY using DIMENSIONS (which can also be dimension
