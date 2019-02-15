@@ -21,11 +21,11 @@ install:
   - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
     
 script:
-  - cl -e '(ql:quickload :array-operations)
+  - cl -e "(ql:quickload :array-operations)
            (ql:quickload :array-operations-tests)
            (when
              (plusp
                (slot-value (array-operations-tests:run)
                            'clunit::failed))
-             (uiop:quit 1))'
+             (uiop:quit 1))"
   
