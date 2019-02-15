@@ -41,11 +41,13 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
   (:method (array)
     (array-dimensions (as-array array))))
 
-(define-let+-expansion (&dims dimensions :value-var value-var
-                                         :body-var body-var)
-  "Dimensions of array-like object."
-  `(let+ ((,dimensions (dims ,value-var)))
-     ,@body-var))
+;; "let-plus" has been removed as a dependency of this library.
+;; This will be left commented out, should someone want to use it in the future.
+;(define-let+-expansion (&dims dimensions :value-var value-var
+;                                         :body-var body-var)
+;  "Dimensions of array-like object."
+;  `(let+ ((,dimensions (dims ,value-var)))
+;     ,@body-var))
 
 (defgeneric size (array)
   (:documentation "Return the total number of elements in array.")
