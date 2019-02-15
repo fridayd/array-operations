@@ -75,8 +75,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
     (assert (= (rank array) 2))
     (array-dimension array 0))
   (:method (array)
-    (let+ (((nrow &ign) (dims array)))
-      nrow)))
+    (dim array 0)))
 
 (defgeneric ncol (array)
   (:documentation "Number of columns.  Will signal an error if ARRAY is not a matrix.")
