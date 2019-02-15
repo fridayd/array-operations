@@ -302,9 +302,9 @@
   (assert-equalp '(3 2 0 1 4) (aops:complete-permutation '(3 2) 5))
   (assert-equalp '(0 1 2 3) (aops:invert-permutation '(0 1 2 3)))
   (assert-equalp '(1 3 2 0) (aops:invert-permutation '(3 0 2 1)))
-  (let+ (((&flet assert-equalp-i2 (permutation)
-            (assert-equalp permutation
-                (aops:invert-permutation (aops:invert-permutation permutation))))))
+  (flet ((assert-equalp-i2 (permutation)
+           (assert-equalp permutation
+               (aops:invert-permutation (aops:invert-permutation permutation)))))
     (assert-equalp-i2 '(0 1 2 3))
     (assert-equalp-i2 '(3 0 2 1))))
 
