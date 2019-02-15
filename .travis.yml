@@ -6,10 +6,10 @@ env:
     #- LISP=abcl
     #- LISP=allegro
     - LISP=sbcl
-    #- LISP=ccl
-    #- LISP=clisp
+    - LISP=ccl
+    - LISP=clisp
     #- LISP=cmucl
-    #- LISP=ecl
+    - LISP=ecl
 
 matrix:
   allow_failures:
