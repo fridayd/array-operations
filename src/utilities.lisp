@@ -39,7 +39,7 @@ is modified."
   (check-type position symbol)
   (check-type subscripts symbol)
   (with-unique-names (rank last increment dimensions-var)
-    `(let+ ((,dimensions-var (ensure-dimensions ,dimensions))
+    `(let* ((,dimensions-var (ensure-dimensions ,dimensions))
             (,rank (length ,dimensions-var))
             (,dimensions-var (make-array ,rank
                                          :element-type 'fixnum
@@ -47,16 +47,16 @@ is modified."
             (,last (1- ,rank))
             (,subscripts (make-array ,rank
                                      :element-type 'fixnum
-                                     :initial-element 0))
-            ((&labels ,increment (index)
-               (unless (minusp index)
-                 (when (= (incf (aref ,subscripts index))
-                          (aref ,dimensions-var index))
-                   (setf (aref ,subscripts index) 0)
-                   (,increment (1- index)))))))
-       (dotimes (,position (product ,dimensions-var))
-         ,@body
-         (,increment ,last)))))
+                                     :initial-element 0)))
+       (labels ((,increment (index)
+         (unless (minusp index)
+           (when (= (incf (aref ,subscripts index))
+                    (aref ,dimensions-var index))
+             (setf (aref ,subscripts index) 0)
+             (,increment (1- index))))))
+         (dotimes (,position (product ,dimensions-var))
+           ,@body
+           (,increment ,last))))))
 
 (defmacro walk-subscripts-list ((dimensions subscripts
                                  &optional (position (gensym "POSITION")))
