@@ -96,7 +96,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
 
 (defun square-matrix? (matrix)
   "Test if MATRIX has two dimensions and that they are equal."
-  (let+ (((&accessors-r/o dims) matrix))
+  (let ((dims (dims matrix)))
     (and (length= dims 2)
          (= (first dims) (second dims)))))
 
