@@ -84,8 +84,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
     (assert (= (rank array) 2))
     (array-dimension array 1))
   (:method (array)
-    (let+ (((&ign ncol) (dims array)))
-      ncol)))
+    (dim array 1)))
 
 (deftype array-matrix ()
   "A rank-2 array."
