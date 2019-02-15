@@ -1,7 +1,7 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
 (cl:defpackage #:array-operations-tests
-  (:use #:cl #:alexandria #:anaphora #:clunit #:let-plus)
+  (:use #:cl #:alexandria #:anaphora #:clunit)
   (:export #:run))
 
 (cl:in-package #:array-operations-tests)
