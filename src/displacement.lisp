@@ -48,7 +48,7 @@ DIMENSIONS.  NOT EXPORTED."
                          "More subscripts than dimensions.")
                  (let ((s (car subscripts))
                        (d (car dimensions)))
-                   (declare (typei fixnum d))
+                   (declare (type fixnum d))
                    (assert (and (integerp s) (< -1 s d)) ()
                            "Invalid subscript.")
                    (push s rev-subscripts)
