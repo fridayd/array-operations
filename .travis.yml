@@ -19,10 +19,13 @@ matrix:
 
 install:
   - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
-  - git clone --depth=1 git@github.com:bendudson/array-operations.git ~/lisp/array-operations
     
 script:
   - cl -e '(ql:quickload :array-operations)
            (ql:quickload :array-operations-tests)
-           (array-operations-tests:run)'
+           (when
+             (plusp
+               (slot-value (array-operations-tests:run)
+                           'clunit::failed))
+             (uiop:quit 1))'
   
