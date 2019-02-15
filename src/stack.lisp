@@ -148,7 +148,7 @@ When applicable, compatibility of dimensions is checked, and the result is used 
          (sum-first
           (reduce #'+ arrays
                   :key (lambda (array)
-                         (let+ ((dimensions (array-dimensions array)))
+                         (let ((dimensions (array-dimensions array)))
                            (unless (eq array array-first)
                              (assert (equal dim-rest (cdr dimensions)) ()
                                      "Array ~A has incomplatible dimensions"
