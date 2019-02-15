@@ -133,15 +133,15 @@ Array element type is preserved."
   (let ((rank (array-rank array)))
     (if (identity-permutation? permutation rank)
         array
-        (let+ ((dimensions (array-dimensions array))
-               ((&flet map-subscripts (subscripts-vector)
-                  (map 'list (curry #'aref subscripts-vector) permutation))))
-          (check-permutation permutation rank)
-          (aprog1 (make-array (map-subscripts (coerce dimensions 'vector))
-                              :element-type (array-element-type array))
-            (walk-subscripts (dimensions subscripts position)
-              (setf (apply #'aref it (map-subscripts subscripts))
-                    (row-major-aref array position))))))))
+        (let ((dimensions (array-dimensions array)))
+          (flet ((map-subscripts (subscripts-vector)
+                   (map 'list (curry #'aref subscripts-vector) permutation)))
+            (check-permutation permutation rank)
+            (aprog1 (make-array (map-subscripts (coerce dimensions 'vector))
+                                :element-type (array-element-type array))
+              (walk-subscripts (dimensions subscripts position)
+                (setf (apply #'aref it (map-subscripts subscripts))
+                      (row-major-aref array position)))))))))
 
 
 ;;; each
