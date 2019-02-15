@@ -72,11 +72,11 @@ etc."
 
 (defmacro nested-loop (syms dimensions &body body)
   "Iterates over a multidimensional range of indices.
-   
+
    SYMS must be a list of symbols, with the first symbol
-   corresponding to the outermost loop. 
-   
-   DIMENSIONS will be evaluated, and must be a list of 
+   corresponding to the outermost loop.
+
+   DIMENSIONS will be evaluated, and must be a list of
    dimension sizes, of the same length as SYMS.
 
    Example:
@@ -93,7 +93,7 @@ etc."
   with some additional type and dimension checks.
   "
   (unless syms (return-from nested-loop `(progn ,@body))) ; No symbols
-  
+
   ;; Generate gensyms for dimension sizes
   (let* ((rank (length syms))
          (syms-rev (reverse syms)) ; Reverse, since starting with innermost
