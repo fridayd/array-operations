@@ -62,11 +62,13 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                    objects))
              (ncol (aif ncol it 1)))
         (aprog1 (make-array (list nrow ncol) :element-type element-type)
-          (mapc (lambda+ ((start-row &rest dims) object)
-                  (if dims
-                      (stack-rows-copy object it element-type start-row)
-                      (fill (displace it ncol (* start-row ncol))
-                            (coerce object element-type))))
+          (mapc (lambda (start-rows-and-dims object)
+                  (destructuring-bind (start-row &rest dims)
+                      start-rows-and-dims
+                    (if dims
+                        (stack-rows-copy object it element-type start-row)
+                        (fill (displace it ncol (* start-row ncol))
+                              (coerce object element-type)))))
                 start-rows-and-dims objects))))))
 
 (defun stack-rows (&rest objects)
