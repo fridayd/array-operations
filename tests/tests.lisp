@@ -286,14 +286,14 @@
 
 (defun permute% (subscripts-mapping array)
   "Helper function for testing permutation.  Permutes ARRAY using SUBSCRIPTS-MAPPING, should return the permuted arguments as a list."
-  (let+ ((dimensions (array-dimensions array))
-         ((&flet map% (subscripts)
-            (apply subscripts-mapping subscripts))))
-    (aprog1 (make-array (map% dimensions)
-                        :element-type (array-element-type array))
+  (let ((dimensions (array-dimensions array)))
+    (flet ((map% (subscripts)
+             (apply subscripts-mapping subscripts)))
+      (aprog1 (make-array (map% dimensions)
+                          :element-type (array-element-type array))
       (aops:walk-subscripts-list (dimensions subscripts)
         (setf (apply #'aref it (map% subscripts))
-              (apply #'aref array subscripts))))))
+              (apply #'aref array subscripts)))))))
 
 (deftest permutations (tests)
   (assert-equalp #*10110 (aops::permutation-flags '(0 3 2) 5))
