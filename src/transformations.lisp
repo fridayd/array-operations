@@ -237,16 +237,16 @@ as rank 0 arrays, following the usual semantics."
   "Fills an array RESULT with the result of
    an array expression. All input and outputs have the same
    shape, and BODY is evaluated for each index
-   
+
    VARIABLES must be a list of symbols bound to arrays.
    Each array must have the same dimensions. These are
    checked at compile and run-time respectively.
-   
+
        (let ((a #2A((1 2) (3 4)))
              (b (make-array '(2 2))))
            (vectorize! b (a) (+ a 1)))
        -> #2A((2 3) (4 5))
-   
+
        (let ((a #(1 2 3))
              (b #(4 5 6)))
            (vectorize! b (a b) (+ a (* b 2))))
@@ -261,7 +261,7 @@ as rank 0 arrays, following the usual semantics."
         (result-tmp (gensym)) ; New symbol needed for result, in case the input RESULT is in VARIABLES
         (type (gensym)) ; Element type
         (indx (gensym)))  ; Index inside loop from 0 to size
-    
+
     ;; Create a new array
     `(let* ((,size (array-total-size ,(first variables)))
             (,result-tmp ,result)  ; result may be an expression. once-only
@@ -277,7 +277,7 @@ as rank 0 arrays, following the usual semantics."
        (if (not (equal (array-dimensions ,(first variables))
                        (array-dimensions ,result-tmp)))
            (error "~S and ~S have different dimensions" ',(first variables) ',result))
-       
+
        (dotimes (,indx ,size)
          ;; Locally redefine variables to be scalars at a given index
          (let ,(mapcar (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
@@ -289,15 +289,15 @@ as rank 0 arrays, following the usual semantics."
   "Makes a new array of type ELEMENT-TYPE, containing the result of
    an array expression. All input and outputs have the same
    shape, and BODY is evaluated for each index
-   
+
    VARIABLES must be a list of symbols bound to arrays.
    Each array must have the same dimensions. These are
    checked at compile and run-time respectively.
-   
+
        (let ((a #2A((1 2) (3 4))))
            (vectorize* t (a) (+ a 1)))
        -> #2A((2 3) (4 5))
-   
+
        (let ((a #(1 2 3))
              (b #(4 5 6)))
            (vectorize* t (a b) (+ a (* b 2))))
@@ -313,15 +313,15 @@ as rank 0 arrays, following the usual semantics."
     "Makes a new array of type ELEMENT-TYPE, containing the result of
    an array expression. All input and outputs have the same
    shape, and BODY is evaluated for each index
-   
+
    VARIABLES must be a list of symbols bound to arrays.
    Each array must have the same dimensions. These are
    checked at compile and run-time respectively.
-   
+
        (let ((a #2A((1 2) (3 4))))
            (vectorize (a) (+ a 1)))
        -> #2A((2 3) (4 5))
-   
+
        (let ((a #(1 2 3))
              (b #(4 5 6)))
            (vectorize (a b) (+ a (* b 2))))
