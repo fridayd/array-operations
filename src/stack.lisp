@@ -131,12 +131,14 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                    objects))
              (nrow (aif nrow it 1)))
         (aprog1 (make-array (list nrow ncol) :element-type element-type)
-          (mapc (lambda+ ((start-col &rest dims) object)
-                  (if dims
-                      (stack-cols-copy object it element-type start-col)
-                      (loop for row below nrow
-                            with object = (coerce object element-type)
-                            do (setf (aref it row start-col) object))))
+          (mapc (lambda (start-cols-and-dims object)
+                  (destructuring-bind (start-col &rest dims)
+                      start-cols-and-dims
+                    (if dims
+                        (stack-cols-copy object it element-type start-col)
+                        (loop for row below nrow
+                              with object = (coerce object element-type)
+                              do (setf (aref it row start-col) object)))))
                 start-cols-and-dims objects))))))
 
 (defun stack-cols (&rest objects)
