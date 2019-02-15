@@ -143,7 +143,7 @@ When applicable, compatibility of dimensions is checked, and the result is used 
 
 (defun stack*0 (element-type arrays)
   "Stack arrays along the 0 axis, returning an array with given ELEMENT-TYPE."
-  (let+ ((array-first (car arrays))
+  (let* ((array-first (car arrays))
          (dim-rest (cdr (array-dimensions array-first)))
          (sum-first
           (reduce #'+ arrays
