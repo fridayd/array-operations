@@ -7,7 +7,6 @@
   :license "MIT"
   :depends-on (#:alexandria
                #:anaphora
-               #:let-plus
                #:optima)
   :pathname #P"src/"
   :components ((:file "package")

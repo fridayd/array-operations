@@ -4,7 +4,6 @@
   (:use #:cl
         #:alexandria
         #:anaphora
-        #:let-plus
         #:optima)
   (:nicknames #:aops)
   (:shadow #:flatten)

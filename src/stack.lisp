@@ -42,32 +42,34 @@ How objects are used depends on their dimensions, queried by DIMS:
 - when the object has 2 dimensions, use it as a matrix.
 
 When applicable, compatibility of dimensions is checked, and the result is used to determine the number of columns.  When all objects have 0 dimensions, the result has one column."
-  (let+ (ncol
-         ((&flet check-ncol (dim)
-            (if ncol
-                (assert (= ncol dim))
-                (setf ncol dim))))
-         (nrow 0)
-         (start-rows-and-dims (mapcar
-                               (lambda (object)
-                                 (let* ((dims (dims object))
-                                        (increment (ematch dims
-                                                     (nil 1)
-                                                     ((list d0) (check-ncol d0)
-                                                      1)
-                                                     ((list d0 d1) (check-ncol d1)
-                                                      d0))))
-                                   (prog1 (cons nrow dims)
-                                     (incf nrow increment))))
-                               objects))
-         (ncol (aif ncol it 1)))
-    (aprog1 (make-array (list nrow ncol) :element-type element-type)
-      (mapc (lambda+ ((start-row &rest dims) object)
-              (if dims
-                  (stack-rows-copy object it element-type start-row)
-                  (fill (displace it ncol (* start-row ncol))
-                        (coerce object element-type))))
-            start-rows-and-dims objects))))
+  (let (ncol)
+    (flet ((check-ncol (dim)
+             (if ncol
+                 (assert (= ncol dim))
+                 (setf ncol dim))))
+      (let* ((nrow 0)
+             (start-rows-and-dims (mapcar
+                                   (lambda (object)
+                                     (let* ((dims (dims object))
+                                            (increment (ematch dims
+                                                         (nil 1)
+                                                         ((list d0) (check-ncol d0)
+                                                          1)
+                                                         ((list d0 d1) (check-ncol d1)
+                                                          d0))))
+                                       (prog1 (cons nrow dims)
+                                         (incf nrow increment))))
+                                   objects))
+             (ncol (aif ncol it 1)))
+        (aprog1 (make-array (list nrow ncol) :element-type element-type)
+          (mapc (lambda (start-rows-and-dims object)
+                  (destructuring-bind (start-row &rest dims)
+                      start-rows-and-dims
+                    (if dims
+                        (stack-rows-copy object it element-type start-row)
+                        (fill (displace it ncol (* start-row ncol))
+                              (coerce object element-type)))))
+                start-rows-and-dims objects))))))
 
 (defun stack-rows (&rest objects)
   "Like STACK-ROWS*, with ELEMENT-TYPE T."
@@ -109,33 +111,35 @@ How objects are used depends on their dimensions, queried by DIMS:
 - when the object has 2 dimensions, use it as a matrix.
 
 When applicable, compatibility of dimensions is checked, and the result is used to determine the number of rows.  When all objects have 0 dimensions, the result has one row."
-  (let+ (nrow
-         ((&flet check-nrow (dim)
-            (if nrow
-                (assert (= nrow dim))
-                (setf nrow dim))))
-         (ncol 0)
-         (start-cols-and-dims (mapcar
-                               (lambda (object)
-                                 (let* ((dims (dims object))
-                                        (increment (ematch dims
-                                                     (nil 1)
-                                                     ((list d0) (check-nrow d0)
-                                                      1)
-                                                     ((list d0 d1) (check-nrow d0)
-                                                      d1))))
-                                   (prog1 (cons ncol dims)
-                                     (incf ncol increment))))
-                               objects))
-         (nrow (aif nrow it 1)))
-    (aprog1 (make-array (list nrow ncol) :element-type element-type)
-      (mapc (lambda+ ((start-col &rest dims) object)
-              (if dims
-                  (stack-cols-copy object it element-type start-col)
-                  (loop for row below nrow
-                        with object = (coerce object element-type)
-                        do (setf (aref it row start-col) object))))
-            start-cols-and-dims objects))))
+  (let (nrow)
+    (flet ((check-nrow (dim)
+             (if nrow
+                 (assert (= nrow dim))
+                 (setf nrow dim))))
+      (let* ((ncol 0)
+             (start-cols-and-dims (mapcar
+                                   (lambda (object)
+                                     (let* ((dims (dims object))
+                                            (increment (ematch dims
+                                                         (nil 1)
+                                                         ((list d0) (check-nrow d0)
+                                                          1)
+                                                         ((list d0 d1) (check-nrow d0)
+                                                          d1))))
+                                       (prog1 (cons ncol dims)
+                                         (incf ncol increment))))
+                                   objects))
+             (nrow (aif nrow it 1)))
+        (aprog1 (make-array (list nrow ncol) :element-type element-type)
+          (mapc (lambda (start-cols-and-dims object)
+                  (destructuring-bind (start-col &rest dims)
+                      start-cols-and-dims
+                    (if dims
+                        (stack-cols-copy object it element-type start-col)
+                        (loop for row below nrow
+                              with object = (coerce object element-type)
+                              do (setf (aref it row start-col) object)))))
+                start-cols-and-dims objects))))))
 
 (defun stack-cols (&rest objects)
   "Like STACK-COLS*, with ELEMENT-TYPE T."
@@ -143,12 +147,12 @@ When applicable, compatibility of dimensions is checked, and the result is used 
 
 (defun stack*0 (element-type arrays)
   "Stack arrays along the 0 axis, returning an array with given ELEMENT-TYPE."
-  (let+ ((array-first (car arrays))
+  (let* ((array-first (car arrays))
          (dim-rest (cdr (array-dimensions array-first)))
          (sum-first
           (reduce #'+ arrays
                   :key (lambda (array)
-                         (let+ ((dimensions (array-dimensions array)))
+                         (let ((dimensions (array-dimensions array)))
                            (unless (eq array array-first)
                              (assert (equal dim-rest (cdr dimensions)) ()
                                      "Array ~A has incomplatible dimensions"

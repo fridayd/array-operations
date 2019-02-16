@@ -39,7 +39,7 @@ displaced and share structure."
   "Return (values OFFSET REMAINING-DIMENSIONS) that can be used to displace a
 row-major subarray starting at SUBSCRIPTS in an array with the given
 DIMENSIONS.  NOT EXPORTED."
-  (let+ (rev-dimensions
+  (let* (rev-dimensions
          rev-subscripts
          (tail (do ((dimensions dimensions (cdr dimensions))
                     (subscripts subscripts (cdr subscripts)))
@@ -69,8 +69,8 @@ with all the other subscripts set to 0, dimensions inferred from the original.
 If no subscripts are given, the original array is returned.  Implemented by
 displacing, may share structure."
   (if subscripts
-      (let+ (((&values offset dimensions)
-              (sub-location% (array-dimensions array) subscripts)))
+      (multiple-value-bind (offset dimensions)
+          (sub-location% (array-dimensions array) subscripts)
         (if dimensions
             (displace array dimensions offset)
             (apply #'aref array subscripts)))
@@ -85,7 +85,8 @@ semantics of SETF easy."
   target)
 
 (defun (setf sub) (value array &rest subscripts)
-  (let+ (((&values subarray atom?) (apply #'sub array subscripts)))
+  (multiple-value-bind (subarray atom?)
+      (apply #'sub array subscripts)
     (if atom?
         (setf (apply #'aref array subscripts) value)
         (copy-into subarray value))))
@@ -135,7 +136,6 @@ that element is not an array, the original ARRAY is returned as it is."
   (setf (subseq vector start end) value))
 
 ;;; reshaping
-
 (defun fill-in-dimensions (dimensions size)
   "If one of the dimensions is missing (indicated with T), replace it with a
 dimension so that the total product equals SIZE.  If that's not possible,
@@ -145,29 +145,29 @@ array)."
   (aetypecase dimensions
     ((integer 0) (assert (= size it)) (list it))
     (array (assert (= size (size it))) (dims it))
-    (list (let+ (((&flet missing? (dimension) (eq dimension t)))
-                 missing
-                 (product 1))
-            (loop for dimension in dimensions
-                  do (if (missing? dimension)
-                         (progn
-                           (assert (not missing) ()
-                                   "More than one missing dimension.")
-                           (setf missing t))
-                         (progn
-                           (check-type dimension (integer 1))
-                           (multf product dimension))))
-            (if missing
-                (let+ (((&values fraction remainder) (floor size product)))
-                  (assert (zerop remainder) ()
-                          "Substitution does not result in an integer ~
-                          dimension.")
-                  (mapcar (lambda (dimension)
-                            (if (missing? dimension) fraction dimension))
-                          dimensions))
-                (progn
-                  (assert (= size product))
-                  dimensions))))))
+    (list (flet ((missing? (dimension) (eq dimension t)))
+            (let ((missing)
+                  (product 1))
+              (loop for dimension in dimensions
+                    do (if (missing? dimension)
+                           (progn
+                             (assert (not missing) ()
+                                     "More than one missing dimension.")
+                             (setf missing t))
+                           (progn
+                             (check-type dimension (integer 1))
+                             (multf product dimension))))
+              (if missing
+                  (multiple-value-bind (fraction remainder)
+                      (floor size product)
+                    (assert (zerop remainder) ()
+                            "Substitution does not result in an integer ~ dimension.")
+                    (mapcar (lambda (dimension)
+                              (if (missing? dimension) fraction dimension))
+                            dimensions))
+                  (progn
+                    (assert (= size product))
+                    dimensions)))))))
 
 (defun reshape (array dimensions &optional (offset 0))
   "Reshape ARRAY using DIMENSIONS (which can also be dimension

@@ -41,11 +41,13 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
   (:method (array)
     (array-dimensions (as-array array))))
 
-(define-let+-expansion (&dims dimensions :value-var value-var
-                                         :body-var body-var)
-  "Dimensions of array-like object."
-  `(let+ ((,dimensions (dims ,value-var)))
-     ,@body-var))
+;; "let-plus" has been removed as a dependency of this library.
+;; This will be left commented out, should someone want to use it in the future.
+;(define-let+-expansion (&dims dimensions :value-var value-var
+;                                         :body-var body-var)
+;  "Dimensions of array-like object."
+;  `(let+ ((,dimensions (dims ,value-var)))
+;     ,@body-var))
 
 (defgeneric size (array)
   (:documentation "Return the total number of elements in array.")
@@ -75,8 +77,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
     (assert (= (rank array) 2))
     (array-dimension array 0))
   (:method (array)
-    (let+ (((nrow &ign) (dims array)))
-      nrow)))
+    (dim array 0)))
 
 (defgeneric ncol (array)
   (:documentation "Number of columns.  Will signal an error if ARRAY is not a matrix.")
@@ -84,8 +85,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
     (assert (= (rank array) 2))
     (array-dimension array 1))
   (:method (array)
-    (let+ (((&ign ncol) (dims array)))
-      ncol)))
+    (dim array 1)))
 
 (deftype array-matrix ()
   "A rank-2 array."
@@ -98,7 +98,7 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
 
 (defun square-matrix? (matrix)
   "Test if MATRIX has two dimensions and that they are equal."
-  (let+ (((&accessors-r/o dims) matrix))
+  (let ((dims (dims matrix)))
     (and (length= dims 2)
          (= (first dims) (second dims)))))
 
