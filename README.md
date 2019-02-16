@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bendudson/array-operations.svg?branch=master)](https://travis-ci.org/bendudson/array-operations)
+
 Introduction
 ============
 
