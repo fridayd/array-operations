@@ -63,14 +63,15 @@ The traversal order is unspecified and may be nonlinear."
 (defun permutation-flags (permutation &optional (rank (length permutation)))
   "Make a bit vector of flags with indexes from PERMUTATION, signalling errors
 for invalid and repeated indices.  NOT EXPORTED."
-  (aprog1 (make-array rank :element-type 'bit :initial-element 0)
+  (let ((result (make-array rank :element-type 'bit :initial-element 0)))
     (map nil (lambda (p)
                (assert (and (integerp p) (< -1 p rank)) ()
                        'permutation-invalid-index :index p)
-               (assert (zerop (aref it p)) ()
+               (assert (zerop (aref result p)) ()
                        'permutation-repeated-index :index p)
-               (setf (aref it p) 1))
-         permutation)))
+               (setf (aref result p) 1))
+         permutation)
+    result))
 
 (defun check-permutation (permutation
                           &optional (rank (length permutation) rank?))
