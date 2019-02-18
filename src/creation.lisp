@@ -1,7 +1,7 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
 ;;; Routines for creating arrays
-;;; 
+;;;
 
 (in-package #:array-operations)
 
@@ -15,7 +15,7 @@
     array))
 
 (defun zeros! (array)
-  "Fills the given ARRAY with zero values, coerced to the element type. 
+  "Fills the given ARRAY with zero values, coerced to the element type.
 Returns ARRAY."
   (fill! array 0))
 
@@ -32,7 +32,7 @@ Returns ARRAY."
               :initial-element 0))
 
 (defun ones! (array)
-  "Fills the given ARRAY with 1's, coerced to the element type. 
+  "Fills the given ARRAY with 1's, coerced to the element type.
 Returns ARRAY."
   (fill! array 1))
 
@@ -50,7 +50,7 @@ Returns ARRAY."
 
 (defun rand! (array)
   "Fills a given ARRAY with random numbers,
-uniformly distributed between 0 and 1. 
+uniformly distributed between 0 and 1.
 Uses the built-in RANDOM function.
 Returns ARRAY."
   (let ((size (array-total-size array))
@@ -64,7 +64,7 @@ Returns ARRAY."
    uniformly distributed between 0 and 1.
 
    Uses the built-in RANDOM function.
-   
+
    (rand 3)  -> #(0.39319038 0.69693553 0.5021677)
    (rand '(2 2)) -> #2A((0.91003513 0.23208928) (0.5577954 0.94657767))
 
@@ -80,7 +80,7 @@ Returns ARRAY."
    uniformly distributed between 0 and 1.
 
    Uses the built-in RANDOM function.
-   
+
    (rand 3)  -> #(0.39319038 0.69693553 0.5021677)
    (rand '(2 2)) -> #2A((0.91003513 0.23208928) (0.5577954 0.94657767))
 
@@ -103,7 +103,7 @@ Returns ARRAY."
   (let ((element-type (array-element-type array))
         (size (array-total-size array)))
     (do ((i 0 (+ 2 i)))
-        ((>= i (- size 1)))   
+        ((>= i (- size 1)))
       ;; Box-Muller algorithm
       ;; Generate two uniform random numbers, u1 and u2
       ;;
@@ -159,25 +159,25 @@ Returns ARRAY."
 
 (defun linspace! (array start stop)
   "Fill an array with evenly spaced numbers over an interval.
-   The first element is equal to START and last element STOP, 
+   The first element is equal to START and last element STOP,
    with constant difference between consecutive elements in ROW-MAJOR-INDEX."
   (let* ((size (array-total-size array))
          (element-type (array-element-type array))
          (delta (/ (- stop start) (- size 1)))) ; Difference between values
-    
+
     (dotimes (i size)
       (setf (row-major-aref array i) (coerce (+ start (* delta i)) element-type)))
     array))
 
 (defun linspace* (element-type start stop n)
   "Make a vector of N elements and type ELEMENT-TYPE, containing evenly spaced numbers over an interval.
-   The first element is equal to START and last element STOP, 
+   The first element is equal to START and last element STOP,
    with constant difference between consecutive elements."
   (linspace! (make-array n :element-type element-type) start stop))
 
 (defun linspace (start stop n)
   "Make a vector of N elements and type T, containing evenly spaced numbers over an interval.
-   The first element is equal to START and last element STOP, 
+   The first element is equal to START and last element STOP,
    with constant difference between consecutive elements.
 
   (linspace 0 4 5) -> #(0 1 2 3 4)
@@ -199,4 +199,3 @@ Returns ARRAY."
               :element-type element-type
               :adjustable adjustable
               :fill-pointer fill-pointer))
-
