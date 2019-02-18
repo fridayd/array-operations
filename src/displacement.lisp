@@ -113,7 +113,8 @@ that element is not an array, the original ARRAY is returned as it is."
     (if (arrayp first)
         (let* ((dimensions (array-dimensions array))
                (sub-dimensions (array-dimensions first))
-               (element-type (aif element-type it (array-element-type first)))
+               (element-type (or element-type
+                                 (array-element-type first)))
                (result (make-array (append dimensions sub-dimensions)
                                    :element-type element-type))
                (length (product dimensions))
