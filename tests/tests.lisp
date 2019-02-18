@@ -39,7 +39,7 @@
                            :element-type 'single-float
                            :initial-element 1.2)))
     (aops:zeros! array)
-    (dotimes (i (array-total-size array))  
+    (dotimes (i (array-total-size array))
       (assert-equalp 0s0 (row-major-aref array i)))))
 
 (deftest ones (tests)
