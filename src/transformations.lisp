@@ -99,12 +99,13 @@ single element."
 (defun invert-permutation (permutation)
   "Invert a permutation."
   (check-permutation permutation)
-  (coerce (aprog1 (make-array (length permutation) :element-type 'fixnum)
+  (coerce (let ((result (make-array (length permutation) :element-type 'fixnum)))
             (map nil (let ((index 0))
                        (lambda (p)
-                         (setf (aref it p) index)
+                         (setf (aref result p) index)
                   (incf index)))
-                 permutation))
+                 permutation)
+            result)
           'list))
 
 (defun identity-permutation? (permutation
