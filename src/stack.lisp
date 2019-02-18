@@ -158,13 +158,14 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                      "Array ~A has incomplatible dimensions"
                                      array))
                            (first dimensions))))))
-    (aprog1 (make-array (cons sum-first dim-rest) :element-type element-type)
+    (let ((result (make-array (cons sum-first dim-rest) :element-type element-type)))
       (loop with cumulative-sum = 0
             for array in arrays
             do (let* ((dim-first (array-dimension array 0))
                       (end (+ cumulative-sum dim-first)))
-                 (setf (partition it cumulative-sum end) array
-                       cumulative-sum end))))))
+                 (setf (partition result cumulative-sum end) array
+                       cumulative-sum end)))
+      result)))
 
 (defun stack* (element-type axis array &rest arrays)
   "Stack array arguments along AXIS.  ELEMENT-TYPE determines the element-type
