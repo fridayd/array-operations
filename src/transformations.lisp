@@ -150,10 +150,12 @@ Array element type is preserved."
   "Apply function to the array arguments elementwise, and return the result as
 an array with the given ELEMENT-TYPE.  Arguments are checked for dimension
 compatibility."
-  (aprog1 (make-array (array-dimensions array) :element-type element-type)
-    (assert (apply #'same-dimensions? array other-arrays))
-    (apply #'map-into (flatten it) function
-           (flatten array) (mapcar #'flatten other-arrays))))
+  (assert (apply #'same-dimensions? array other-arrays))
+  (let ((result (make-array (array-dimensions array)
+                            :element-type element-type)))
+    (apply #'map-into (flatten result) function
+           (flatten array) (mapcar #'flatten other-arrays))
+    result))
 
 (defun each (function array &rest other-arrays)
   "Like EACH*, with ELEMENT-TYPE T."
