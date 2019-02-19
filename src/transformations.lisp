@@ -335,5 +335,3 @@ as rank 0 arrays, following the usual semantics."
        -> #(9 12 15)
    "
     `(vectorize* t ,variables ,@body))
-
-

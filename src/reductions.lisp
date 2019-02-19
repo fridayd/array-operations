@@ -27,11 +27,11 @@
           (setq wins ind
                 max score))))
     (values wins max)))
-  
+
 (defun best (fn array)
   "FN must accept two inputs and return true/false. This function is applied
    to elements of ARRAY, to find the 'best'. The row-major-aref index is returned.
-  
+
    Example: The index of the maximum is
 
    * (best #'> #(1 2 3 4))
@@ -62,8 +62,8 @@
 
 (defmacro vectorize-reduce (fn variables &body body)
   "Performs a reduction using FN over all elements in a vectorized expression
-   on array VARIABLES. 
-  
+   on array VARIABLES.
+
    VARIABLES must be a list of symbols bound to arrays.
    Each array must have the same dimensions. These are
    checked at compile and run-time respectively.
@@ -80,24 +80,24 @@
   (dolist (var variables)
     (if (not (symbolp var))
         (error "~S is not a symbol" var)))
-  
+
   (let ((size (gensym)) ; Total array size (same for all variables)
         (result (gensym)) ; Returned value
         (indx (gensym)))  ; Index inside loop from 0 to size
-    
+
     ;; Get the size of the first variable
     `(let ((,size (array-total-size ,(first variables))))
        ;; Check that all variables have the same size
        ,@(mapcar (lambda (var) `(if (not (equal (array-dimensions ,(first variables))
                                                 (array-dimensions ,var)))
                                     (error "~S and ~S have different dimensions" ',(first variables) ',var)))
-              (rest variables)) 
-       
+              (rest variables))
+
        ;; Apply FN with the first two elements (or fewer if size < 2)
        (let ((,result (apply ,fn (loop for ,indx below (min ,size 2) collecting
                                       (let ,(map 'list (lambda (var) (list var `(row-major-aref ,var ,indx))) variables)
                                         (progn ,@body))))))
-         
+
          ;; Loop over the remaining indices
          (loop for ,indx from 2 below ,size do
             ;; Locally redefine variables to be scalars at a given index
