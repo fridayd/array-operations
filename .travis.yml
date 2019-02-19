@@ -10,12 +10,12 @@ env:
     #- LISP=allegro
     - LISP=sbcl
     - LISP=ccl
-    #- LISP=clisp
+    - LISP=clisp
     #- LISP=ecl
 
 matrix:
   allow_failures:
-    - env: LISP=ccl
+    - env: LISP=clisp
 
 install:
   - ./install.sh
