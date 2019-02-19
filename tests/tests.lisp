@@ -1,7 +1,7 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
 (cl:defpackage #:array-operations-tests
-  (:use #:cl #:alexandria #:anaphora #:clunit)
+  (:use #:cl #:alexandria #:clunit)
   (:export #:run))
 
 (cl:in-package #:array-operations-tests)
@@ -39,7 +39,7 @@
                            :element-type 'single-float
                            :initial-element 1.2)))
     (aops:zeros! array)
-    (dotimes (i (array-total-size array))  
+    (dotimes (i (array-total-size array))
       (assert-equalp 0s0 (row-major-aref array i)))))
 
 (deftest ones (tests)
@@ -67,7 +67,7 @@
                            :element-type 'integer
                            :initial-element 3)))
     (aops:ones! array)
-    (dotimes (i (array-total-size array))  
+    (dotimes (i (array-total-size array))
       (assert-equalp 1 (row-major-aref array i)))))
 
 (deftest rand (tests)
@@ -152,7 +152,7 @@
          (a* (aops:similar-array a)))
     (assert-equalp '(4) (array-dimensions a*))
     (assert-true (typep (array-element-type a*) 'T)))
-  
+
   (let* ((b (make-array '(2 2) :element-type 'fixnum))
          (b* (aops:similar-array b))
          (c (aops:similar-array b :element-type 'double-float))
@@ -289,11 +289,12 @@
   (let ((dimensions (array-dimensions array)))
     (flet ((map% (subscripts)
              (apply subscripts-mapping subscripts)))
-      (aprog1 (make-array (map% dimensions)
-                          :element-type (array-element-type array))
-      (aops:walk-subscripts-list (dimensions subscripts)
-        (setf (apply #'aref it (map% subscripts))
-              (apply #'aref array subscripts)))))))
+      (let ((result (make-array (map% dimensions)
+                                :element-type (array-element-type array))))
+        (aops:walk-subscripts-list (dimensions subscripts)
+          (setf (apply #'aref result (map% subscripts))
+                (apply #'aref array subscripts)))
+        result))))
 
 (deftest permutations (tests)
   (assert-equalp #*10110 (aops::permutation-flags '(0 3 2) 5))
@@ -380,7 +381,7 @@
     (assert-condition error
         (aops:vectorize! b (a) (+ a 1))
       "Wrong result array shape"))
-  
+
   (let ((a #(1 2 3))
         (b #(4 5 6)))
     (let ((c (make-array 3 :element-type 'integer)))
@@ -402,10 +403,10 @@
     (let ((count 0)) ; Count how many times make-array is called
       (assert-equalp #(9 12 15)
           (aops:vectorize! (progn
-                             (incf count) 
+                             (incf count)
                              (make-array 3 :element-type 'integer))
               (a b) (+ a (* b 2))))
-      
+
       (assert-equalp 1 count "Expression evaluated multiple times"))))
 
 
@@ -440,7 +441,7 @@
 (deftest each-index (tests)
   (let ((a #2A((1 2 3) (4 5 6)))
         (b #2A((1 2) (3 4))))
-    
+
     ;; Transpose
     (assert-equalp
         #2A((1 4) (2 5) (3 6))
@@ -454,27 +455,27 @@
     ;; Checks dimensions
     (assert-condition error
         (aops:each-index i (aref a i i)))
-      
+
     ;; Arrays of arrays
     (assert-equalp
         #( #(1 2 3) #(4 5 6) )
         (aops:each-index i
           (aops:each-index j
             (aref A i j))))
-    
+
     ;; Matrix-matrix multiply
     (assert-equalp
         #2A((9 12 15) (19 26 33))
       (aops:each-index (i j)
         (aops:sum-index k
           (* (aref B i k) (aref A k j))))))
-  
+
   ;; Indexing with ELT and SVREF
   (let ((a #(1 2 3)))
     (assert-equalp
      #(1 2 3)
      (aops:each-index i (elt a i)))
-    
+
     (assert-equalp
      #(1 2 3)
      (aops:each-index i (svref a i)))))
@@ -482,7 +483,7 @@
 (deftest each-index* (tests)
   (let ((a #(1 2 3))
         (b #2A((1 2) (3 4))))
-    
+
     ;; Test element type (fixnum)
     (assert-equalp
         'fixnum
@@ -515,12 +516,12 @@
                           (incf count)
                           (make-array '(2 3)))
           (i j) (- j i)))
-    (assert-equalp 1 count "Expression not evaluated only once")))   
+    (assert-equalp 1 count "Expression not evaluated only once")))
 
 (deftest sum-index (tests)
   (let ((A #2A((1 2) (3 4)))
         (B #2A((1 2 3) (4 5 6))))
-    
+
     ;; Sum all elements
     (assert-equalp
         10
@@ -539,11 +540,11 @@
     ;; Checks incompatible dimensions
     (assert-condition error
         (aops:sum-index i (aref B i i)))))
-    
+
 (deftest reduce-index (tests)
   (let ((A #2A((1 2) (3 4)))
         (B #2A((1 2 3) (4 5 6))))
-    
+
     ;; Sum all elements
     (assert-equalp
         10
@@ -563,7 +564,7 @@
     (assert-equalp
         4
         (aops:reduce-index #'max j (row-major-aref A j)))
-    
+
     ;; Checks incompatible dimensions
     (assert-condition error
         (aops:reduce-index #'+ i (aref B i i)))))

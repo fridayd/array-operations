@@ -6,7 +6,6 @@
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :license "MIT"
   :depends-on (#:alexandria
-               #:anaphora
                #:optima)
   :pathname #P"src/"
   :components ((:file "package")

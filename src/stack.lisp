@@ -60,16 +60,17 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                        (prog1 (cons nrow dims)
                                          (incf nrow increment))))
                                    objects))
-             (ncol (aif ncol it 1)))
-        (aprog1 (make-array (list nrow ncol) :element-type element-type)
+             (ncol (or ncol 1)))
+        (let ((result (make-array (list nrow ncol) :element-type element-type)))
           (mapc (lambda (start-rows-and-dims object)
                   (destructuring-bind (start-row &rest dims)
                       start-rows-and-dims
                     (if dims
-                        (stack-rows-copy object it element-type start-row)
-                        (fill (displace it ncol (* start-row ncol))
+                        (stack-rows-copy object result element-type start-row)
+                        (fill (displace result ncol (* start-row ncol))
                               (coerce object element-type)))))
-                start-rows-and-dims objects))))))
+                start-rows-and-dims objects)
+          result)))))
 
 (defun stack-rows (&rest objects)
   "Like STACK-ROWS*, with ELEMENT-TYPE T."
@@ -129,17 +130,18 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                        (prog1 (cons ncol dims)
                                          (incf ncol increment))))
                                    objects))
-             (nrow (aif nrow it 1)))
-        (aprog1 (make-array (list nrow ncol) :element-type element-type)
+             (nrow (or nrow 1)))
+        (let ((result (make-array (list nrow ncol) :element-type element-type)))
           (mapc (lambda (start-cols-and-dims object)
                   (destructuring-bind (start-col &rest dims)
                       start-cols-and-dims
                     (if dims
-                        (stack-cols-copy object it element-type start-col)
+                        (stack-cols-copy object result element-type start-col)
                         (loop for row below nrow
                               with object = (coerce object element-type)
-                              do (setf (aref it row start-col) object)))))
-                start-cols-and-dims objects))))))
+                              do (setf (aref result row start-col) object)))))
+                start-cols-and-dims objects)
+          result)))))
 
 (defun stack-cols (&rest objects)
   "Like STACK-COLS*, with ELEMENT-TYPE T."
@@ -158,13 +160,14 @@ When applicable, compatibility of dimensions is checked, and the result is used 
                                      "Array ~A has incomplatible dimensions"
                                      array))
                            (first dimensions))))))
-    (aprog1 (make-array (cons sum-first dim-rest) :element-type element-type)
+    (let ((result (make-array (cons sum-first dim-rest) :element-type element-type)))
       (loop with cumulative-sum = 0
             for array in arrays
             do (let* ((dim-first (array-dimension array 0))
                       (end (+ cumulative-sum dim-first)))
-                 (setf (partition it cumulative-sum end) array
-                       cumulative-sum end))))))
+                 (setf (partition result cumulative-sum end) array
+                       cumulative-sum end)))
+      result)))
 
 (defun stack* (element-type axis array &rest arrays)
   "Stack array arguments along AXIS.  ELEMENT-TYPE determines the element-type
