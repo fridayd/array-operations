@@ -549,7 +549,7 @@
     ;; Checks incompatible dimensions
     (assert-condition error
         (aops:sum-index i (aref B i i)))))
-    
+
 (deftest reduce-index (indexing)
   (let ((A #2A((1 2) (3 4)))
         (B #2A((1 2 3) (4 5 6))))
