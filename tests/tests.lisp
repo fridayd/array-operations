@@ -169,6 +169,19 @@
     (assert-equalp (array-element-type c) 'DOUBLE-FLOAT)
     (assert-true (adjustable-array-p d))))
 
+(deftest generate (creation)
+  (let ((a (aops:generate #'identity '(3 2) :position))
+        (b (aops:generate #'identity '(2 3) :subscripts)))
+    (assert-equalp #2A((0 1)
+                       (2 3)
+                       (4 5))
+                   a)
+    (assert-equalp #2A(((0 0) (0 1) (0 2))
+                       ((1 0) (1 1) (1 2)))
+                   b)
+    (assert-equalp #2A(((0 0 0) (1 0 1)))
+                   (aops:generate #'cons '(1 2) :position-and-subscripts))))
+
 ;;; utilities
 
 (deftest walk-subscripts (utilities)
@@ -277,19 +290,6 @@
   (assert-equality (curry #'every #'eql)
       #(1d0 4d0 9d0)
       (map 'vector (aops:coercing 'double-float (lambda (x) (* x x))) #(1 2 3))))
-
-(deftest generate (creation)
-  (let ((a (aops:generate #'identity '(3 2) :position))
-        (b (aops:generate #'identity '(2 3) :subscripts)))
-    (assert-equalp #2A((0 1)
-                       (2 3)
-                       (4 5))
-      a)
-    (assert-equalp #2A(((0 0) (0 1) (0 2))
-                       ((1 0) (1 1) (1 2)))
-      b)
-    (assert-equalp #2A(((0 0 0) (1 0 1)))
-      (aops:generate #'cons '(1 2) :position-and-subscripts))))
 
 (defun permute% (subscripts-mapping array)
   "Helper function for testing permutation.  Permutes ARRAY using SUBSCRIPTS-MAPPING, should return the permuted arguments as a list."
