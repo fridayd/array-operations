@@ -10,15 +10,16 @@ env:
     #- LISP=allegro
     - LISP=sbcl
     - LISP=ccl
-    #- LISP=clisp
+    - LISP=clisp
     #- LISP=ecl
 
 matrix:
   allow_failures:
-    - env: LISP=ccl
+    - env: LISP=clisp
 
 install:
-  - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
+  - ./install.sh
+  #- curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
     
 script:
   - cl -e "(ql:quickload :array-operations)
