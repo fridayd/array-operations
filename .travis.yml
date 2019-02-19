@@ -1,6 +1,9 @@
 language: lisp
 sudo: required
 
+git:
+  depth: 3
+
 env:
   matrix:
     #- LISP=abcl
@@ -20,9 +23,7 @@ install:
 script:
   - cl -e "(ql:quickload :array-operations)
            (ql:quickload :array-operations-tests)
-           (when
-             (plusp
-               (slot-value (array-operations-tests:run)
-                           'clunit::failed))
-             (uiop:quit 1))"
-  
+           (let ((report (array-operations-tests:run)))
+             (when (plusp (slot-value report 'clunit::failed))
+               (princ report)
+               (uiop:quit 1)))"
