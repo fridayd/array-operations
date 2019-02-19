@@ -278,7 +278,7 @@
       #(1d0 4d0 9d0)
       (map 'vector (aops:coercing 'double-float (lambda (x) (* x x))) #(1 2 3))))
 
-(deftest generate (transformations)
+(deftest generate (creation)
   (let ((a (aops:generate #'identity '(3 2) :position))
         (b (aops:generate #'identity '(2 3) :subscripts)))
     (assert-equalp #2A((0 1)
