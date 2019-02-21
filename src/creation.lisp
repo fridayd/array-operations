@@ -206,19 +206,6 @@ Returns ARRAY."
               :element-type element-type
               :fill-pointer fill-pointer)))
 
-(defun make-array-like (array &key (dimensions (dims array))
-                                (element-type (element-type array))
-                                (initial-element nil initial-element?))
-  "Create an array with the same dimensions and element-type as ARRAY (which can be an array-like object that has the appropriate methods defined).  Each attribute can be overriden.  When INITIAL-ELEMENT is given, it is coerced to ELEMENT-TYPE and used as the initial element.
-
-The array returned is always a simple-array and shares no structure with anything else."
-  (if initial-element?
-      (make-array dimensions
-                  :element-type element-type
-                  :initial-element (coerce initial-element element-type))
-      (make-array dimensions
-                  :element-type element-type)))
-
 ;;; generating
 
 (defun generate* (element-type function dimensions &optional arguments)
