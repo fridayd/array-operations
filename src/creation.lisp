@@ -186,19 +186,25 @@ Returns ARRAY."
   "
   (linspace* t start stop n))
 
-(defun similar-array (array &key (element-type (array-element-type array))
+(defun similar-array (array &key (dimensions (dims array))
+                                 (adjustable (adjustable-array-p array))
+                                 (element-type (array-element-type array))
+                                 (initial-element nil initial-element-p)
                                  (fill-pointer (and (array-has-fill-pointer-p array)
-                                                    (fill-pointer array)))
-                                 (adjustable (adjustable-array-p array)))
-  "Make a new array of the same shape, element type, fill pointer and
-   adjustability (if any) as ARRAY, unless overridden by the keyword arguments.
-
-  See alexandria:copy-array for similar function which copies contents
-  "
-  (make-array (array-dimensions array)
-              :element-type element-type
+                                                    (fill-pointer array))))
+  "Returns new array with the same properties as ARRAY.
+   Keyword arguments will override properties of ARRAY.
+   If INITIAL-ELEMENT is specified, it is coerced to ELEMENT-TYPE."
+  (if initial-element-p
+      (make-array dimensions
               :adjustable adjustable
-              :fill-pointer fill-pointer))
+              :element-type element-type
+              :initial-element (coerce initial-element element-type)
+              :fill-pointer fill-pointer)
+      (make-array dimensions
+              :adjustable adjustable
+              :element-type element-type
+              :fill-pointer fill-pointer)))
 
 (defun make-array-like (array &key (dimensions (dims array))
                                 (element-type (element-type array))
