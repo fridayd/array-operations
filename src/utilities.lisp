@@ -10,7 +10,7 @@
 
 (define-modify-macro multf (&rest values) * "Multiply by the arguments")
 
-(defun same-dimensions? (array &rest arrays)
+(defun same-dimensions-p (array &rest arrays)
   "Test if arguments have the same dimensions.  NOT EXPORTED."
   (let ((dimensions (array-dimensions array)))
     (every (lambda (array)
