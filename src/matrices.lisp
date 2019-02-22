@@ -19,3 +19,7 @@
   (let ((dims (dims matrix)))
     (and (length= dims 2)
          (= (first dims) (second dims)))))
+
+;; Aliases for deprecated names 'matrix?' and 'square-matrix?'
+(setf (definition 'matrix?) #'matrixp)
+(setf (definition 'square-matrix?) #'square-matrix-p)
