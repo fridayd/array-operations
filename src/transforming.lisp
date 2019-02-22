@@ -101,7 +101,7 @@ P is the permutation.
 
 Array element type is preserved."
   (let ((rank (array-rank array)))
-    (if (identity-permutation? permutation rank)
+    (if (identity-permutation-p permutation rank)
         array
         (let ((dimensions (array-dimensions array)))
           (flet ((map-subscripts (subscripts-vector)
