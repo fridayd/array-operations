@@ -39,10 +39,10 @@ for invalid and repeated indices.  NOT EXPORTED."
     result))
 
 (defun check-permutation (permutation
-                          &optional (rank (length permutation) rank?))
+                          &optional (rank (length permutation) rank-supplied-p))
   "Check if PERMUTATION is a valid permutation (of the given RANK), and signal
 an error if necessary."
-  (when rank?
+  (when rank-supplied-p
     (assert (= rank (length permutation)) ()
             'permutation-incompatible-rank ))
   (assert (every #'plusp (permutation-flags permutation)) ()
