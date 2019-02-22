@@ -74,8 +74,8 @@ single element."
             result)
           'list))
 
-(defun identity-permutation? (permutation
-                              &optional (rank (length permutation)))
+(defun identity-permutation-p (permutation
+                               &optional (rank (length permutation)))
   "Test if PERMUTATION is the identity permutation, ie a sequence of
 consecutive integers starting at 0.  Note that permutation is otherwise not
 checked, ie it may not be a permutation."
