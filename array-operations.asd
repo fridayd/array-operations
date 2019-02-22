@@ -11,14 +11,14 @@
                #:optima)
   :pathname #P"src/"
   :components ((:file "package")
-               (:file "creation")
+               (:file "creating")
                (:file "utilities")
-               (:file "general")
-               (:file "displacement")
-               (:file "transformations")
-               (:file "reductions")
+               (:file "generic")
+               (:file "displacing")
+               (:file "transforming")
+               (:file "reducing")
                (:file "indexing")
-               (:file "stack")))
+               (:file "stacking")))
 
 (asdf:defsystem #:array-operations-tests
   :serial t
