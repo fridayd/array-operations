@@ -40,8 +40,7 @@
    #:ncol
    #:array-matrix
    #:matrix?
-   #:square-matrix?
-   #:make-array-like)
+   #:square-matrix?)
   (:export ; displacement
    #:displace
    #:flatten
