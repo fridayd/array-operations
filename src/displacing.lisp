@@ -147,11 +147,11 @@ array)."
     (etypecase it
       ((integer 0) (assert (= size it)) (list it))
       (array (assert (= size (size it))) (dims it))
-      (list (flet ((missing? (dimension) (eq dimension t)))
+      (list (flet ((missingp (dimension) (eq dimension t)))
               (let ((missing)
                     (product 1))
                 (loop for dimension in dimensions
-                      do (if (missing? dimension)
+                      do (if (missingp dimension)
                              (progn
                                (assert (not missing) ()
                                        "More than one missing dimension.")
@@ -165,7 +165,7 @@ array)."
                       (assert (zerop remainder) ()
                               "Substitution does not result in an integer ~ dimension.")
                       (mapcar (lambda (dimension)
-                                (if (missing? dimension) fraction dimension))
+                                (if (missingp dimension) fraction dimension))
                               dimensions))
                     (progn
                       (assert (= size product))
