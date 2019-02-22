@@ -121,7 +121,7 @@ Array element type is preserved."
   "Apply function to the array arguments elementwise, and return the result as
 an array with the given ELEMENT-TYPE.  Arguments are checked for dimension
 compatibility."
-  (assert (apply #'same-dimensions? array other-arrays))
+  (assert (apply #'same-dimensions-p array other-arrays))
   (let ((result (make-array (array-dimensions array)
                             :element-type element-type)))
     (apply #'map-into (flatten result) function

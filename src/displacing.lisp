@@ -80,7 +80,7 @@ displacing, may share structure."
   "Copy SOURCE into TARGET, for array arguments of compatible
 dimensions (checked).  Return TARGET, making the implementation of the
 semantics of SETF easy."
-  (assert (same-dimensions? target source))
+  (assert (same-dimensions-p target source))
   (replace (flatten target) (flatten source))
   target)
 
