@@ -8,12 +8,13 @@
   "A rank-2 array."
   '(array * (* *)))
 
-(declaim (inline matrix? square-matrix?))
-(defun matrix? (matrix)
+(declaim (inline matrixp square-matrix-p))
+
+(defun matrixp (matrix)
   "Test if MATRIX has rank 2."
   (length= (dims matrix) 2))
 
-(defun square-matrix? (matrix)
+(defun square-matrix-p (matrix)
   "Test if MATRIX has two dimensions and that they are equal."
   (let ((dims (dims matrix)))
     (and (length= dims 2)
