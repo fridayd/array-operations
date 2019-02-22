@@ -88,6 +88,9 @@ checked, ie it may not be a permutation."
       permutation)
      (= index rank))))
 
+;; Alias to deprecated name for identity-permutation-p
+(setf (fdefinition 'identity-permutation?) #'identity-permutation-p)
+
 (defun permute (permutation array)
   "Return ARRAY with the axes permuted by PERMUTATION, which is a sequence of
 indexes.  Specifically, an array A is transformed to B, where
