@@ -1,12 +1,13 @@
 ;;;; package.lisp
 
 (defpackage #:array-operations
-  (:use #:cl
-        #:optima)
+  (:use #:cl)
   (:import-from #:alexandria
                 #:compose
                 #:curry
                 #:ensure-list)
+  (:import-from #:optima
+                #:ematch)
   (:nicknames #:aops)
   (:shadow #:flatten)
   (:export ; creation
