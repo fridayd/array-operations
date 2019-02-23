@@ -2,8 +2,11 @@
 
 (defpackage #:array-operations
   (:use #:cl
-        #:alexandria
         #:optima)
+  (:import-from #:alexandria
+                #:compose
+                #:curry
+                #:ensure-list)
   (:nicknames #:aops)
   (:shadow #:flatten)
   (:export ; creation
