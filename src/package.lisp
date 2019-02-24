@@ -5,7 +5,9 @@
   (:import-from #:alexandria
                 #:compose
                 #:curry
-                #:ensure-list)
+                #:ensure-list
+                #:length=
+                #:with-unique-names)
   (:import-from #:optima
                 #:ematch)
   (:nicknames #:aops)
