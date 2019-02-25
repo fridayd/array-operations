@@ -3,7 +3,19 @@
 ;;; Routines for creating arrays
 ;;;
 
-(in-package #:array-operations)
+(defpackage :array-operations/creating
+  (:use :cl
+        :array-operations/generic
+        :array-operations/utilities)
+  (:export :fill!
+           :zeros :zeros* :zeros!
+           :ones :ones* :ones!
+           :rand :rand* :rand!
+           :randn :randn* :randn!
+           :linspace :linspace* :linspace!
+           :similar-array))
+
+(in-package :array-operations/creating)
 
 (defun fill! (array value)
   "Fills a given ARRAY with VALUE, coerced to the same element type as ARRAY"
