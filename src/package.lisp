@@ -69,7 +69,6 @@
    #:permutation-repeated-index
    #:permutation-invalid-index
    #:permutation-incompatible-rank
-   #:valid-permutation?
    #:complement-permutation
    #:complete-permutation
    #:invert-permutation
