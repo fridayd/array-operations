@@ -86,6 +86,8 @@
    #:vectorize*
    #:vectorize)
   (:export ; reductions
+   #:most
+   #:best
    #:argmax
    #:argmin
    #:vectorize-reduce)
