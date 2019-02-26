@@ -1,7 +1,14 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/reducing
+  (:use :cl)
+  (:export :most
+           :best
+           :argmax
+           :argmin
+           :vectorize-reduce))
 
+(in-package :array-operations/reducing)
 
 (defun most (fn array)
   "Finds the element of ARRAY which maximises FN applied to the array value.
