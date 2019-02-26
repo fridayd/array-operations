@@ -1,5 +1,3 @@
-;;;; array-operations.asd
-
 (asdf:defsystem #:array-operations
   :serial t
   :description "Simple array operations library for Common Lisp."
