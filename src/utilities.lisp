@@ -1,6 +1,14 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/utilities
+  (:use :cl :array-operations/generic)
+  (:import-from :alexandria
+                :with-unique-names)
+  (:export :walk-subscripts
+           :walk-subscripts-list
+           :nested-loop))
+
+(in-package :array-operations/utilities)
 
 ;;; utilities used internally, not exported
 
