@@ -22,7 +22,9 @@
            :walk-subscripts-list
            :nested-loop)
   ;; Creating
-  (:export :fill!
+  (:export :generate*
+           :generate
+           :fill!
            :zeros    :zeros*    :zeros!
            :ones     :ones*     :ones!
            :rand     :rand*     :rand!
@@ -52,7 +54,6 @@
            :vectorize-reduce)
   ;; Transforming
   (:export :coercing
-           :generate*  :generate
            :each*      :each
            :margin*    :margin
            :outer*     :outer
