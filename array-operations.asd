@@ -11,13 +11,13 @@
   :components ((:file "package")
                (:file "generic")
                (:file "reducing")
+               (:file "matrices"     :depends-on ("generic"))
                (:file "utilities"    :depends-on ("generic"))
                (:file "creating"     :depends-on ("generic" "utilities"))
                (:file "indexing"     :depends-on ("generic" "utilities"))
                (:file "displacing"   :depends-on ("generic" "utilities"))
                (:file "transforming" :depends-on ("generic" "utilities" "displacing"))
-               (:file "stacking"     :depends-on ("generic" "displacing"))
-               (:file "matrices"     :depends-on ("generic" "utilities"))))
+               (:file "stacking"     :depends-on ("generic" "displacing"))))
 
 (asdf:defsystem #:array-operations-tests
   :serial t
