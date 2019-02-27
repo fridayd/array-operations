@@ -16,7 +16,8 @@
                (:file "indexing"     :depends-on ("generic" "utilities"))
                (:file "displacing"   :depends-on ("generic" "utilities"))
                (:file "transforming" :depends-on ("generic" "utilities" "displacing"))
-               (:file "stacking"     :depends-on ("generic" "displacing"))))
+               (:file "stacking"     :depends-on ("generic" "displacing"))
+               (:file "matrices"     :depends-on ("generic" "utilities"))))
 
 (asdf:defsystem #:array-operations-tests
   :serial t
