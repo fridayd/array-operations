@@ -1,6 +1,17 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/matrices
+  (:use :cl :array-operations/generic)
+  (:import-from :alexandria
+                :length=)
+  (:export :array-matrix
+           :matrixp
+           :square-matrix-p
+           ;; the next two are demarcated aliases for the previous two
+           :matrix?
+           :square-matrix?))
+
+(in-package :array-operations/matrices)
 
 ;;; representing matrices as 2D arrays
 
