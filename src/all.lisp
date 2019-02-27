@@ -1,3 +1,12 @@
 (uiop/package:define-package :array-operations/all
-   (:nickname :array-operations)
-   (:use-reexport :array-operations/generic))
+  (:nicknames :array-operations :aops)
+  (:use-reexport :array-operations/generic
+                 :array-operations/utilities
+                 :array-operations/reducing
+                 :array-operations/matrices
+                 :array-operations/creating
+                 :array-operations/indexing
+                 :array-operations/displacing
+                 :array-operations/transforming
+                 :array-operations/stacking))
+

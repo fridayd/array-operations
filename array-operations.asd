@@ -6,7 +6,9 @@
   :maintainer "Ben Dudson <http://github.com/bendudson>"
   :homepage "https://github.com/bendudson/array-operations"
   :license "MIT"
-  :class :package-inferred-system)
+  :class :package-inferred-system
+  :pathname "src/"
+  :depends-on (:array-operations/all))
 
 (asdf:defsystem #:array-operations-tests
   :serial t
@@ -16,6 +18,7 @@
   :homepage "https://github.com/bendudson/array-operations"
   :license "MIT"
   :depends-on (#:array-operations       ; loads everything else
+               #:alexandria
                #:clunit)
   :pathname #P"tests/"
   :components ((:file "tests")))
