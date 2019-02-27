@@ -1,7 +1,6 @@
 (uiop/package:define-package :array-operations/all
   (:nicknames :array-operations :aops)
   (:use-reexport :array-operations/generic
-                 :array-operations/utilities
                  :array-operations/reducing
                  :array-operations/matrices
                  :array-operations/creating
