@@ -1,4 +1,12 @@
-(in-package #:array-operations)
+(defpackage :array-operations/indexing
+  (:use :cl)
+  (:export :each-index
+           :each-index*
+           :each-index!
+           :sum-index
+           :reduce-index))
+
+(in-package :array-operations/indexing)
 
 (defun find-array-dimensions (expr)
   "Walks an expression tree EXPR, finds AREF and ROW-MAJOR-AREF, SVREF or ELT calls.
