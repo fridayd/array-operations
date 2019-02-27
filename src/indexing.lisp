@@ -1,5 +1,6 @@
 (defpackage :array-operations/indexing
-  (:use :cl)
+  (:use :cl :array-operations/generic
+            :array-operations/utilities)
   (:export :each-index
            :each-index*
            :each-index!
