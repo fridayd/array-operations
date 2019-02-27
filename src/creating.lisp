@@ -5,15 +5,17 @@
 
 (defpackage :array-operations/creating
   (:use :cl
-        :array-operations/generic
-        :array-operations/utilities)
+        :array-operations/generic)
+  (:import-from :array-operations/utilities
+                :ensure-dimensions)
   (:export :fill!
-           :zeros :zeros* :zeros!
-           :ones :ones* :ones!
-           :rand :rand* :rand!
-           :randn :randn* :randn!
+           :zeros    :zeros*    :zeros!
+           :ones     :ones*     :ones!
+           :rand     :rand*     :rand!
+           :randn    :randn*    :randn!
            :linspace :linspace* :linspace!
-           :similar-array))
+           :similar-array
+           :generate* :generate))
 
 (in-package :array-operations/creating)
 

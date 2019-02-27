@@ -9,7 +9,6 @@
                 :curry
                 :ensure-list)
   (:export :coercing
-           :generate*  :generate
            :each*      :each
            :margin*    :margin
            :outer*     :outer
