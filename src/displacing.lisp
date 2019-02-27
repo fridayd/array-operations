@@ -1,6 +1,21 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/displacing
+  (:use :cl)
+  (:import-from :alexandria
+                :length=)
+  (:export :displace
+           :flatten
+           :split
+           :copy-into
+           :sub
+           :partition
+           :combine
+           :subvec
+           :reshape
+           :reshape-col :reshape-row))
+
+(in-package :array-operations/displacing)
 
 ;;; displacement and flattening
 
