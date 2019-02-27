@@ -4,7 +4,7 @@
   (:use :cl :array-operations/generic
             :array-operations/utilities)
   (:import-from :alexandria
-                :curry
+                :curry)
   (:export :copy-row-major-block
            :stack-rows-copy :stack-rows* :stack-rows
            :stack-cols-copy :stack-cols* :stack-cols
