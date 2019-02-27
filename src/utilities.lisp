@@ -6,6 +6,7 @@
                 :with-unique-names)
   (:export :walk-subscripts
            :walk-subscripts-list
+           :ensure-dimensions
            :nested-loop))
 
 (in-package :array-operations/utilities)
