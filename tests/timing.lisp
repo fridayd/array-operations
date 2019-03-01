@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (in-package #:array-operations/tests)
 
 (defparameter *a* (ao:generate* 'double-float (lambda () (random 1d0))

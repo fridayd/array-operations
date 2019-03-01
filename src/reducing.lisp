@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (defpackage :array-operations/reducing
   (:use :cl)
   (:export :most

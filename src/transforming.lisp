@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (defpackage :array-operations/transforming
   (:use :cl :array-operations/generic
             :array-operations/utilities
