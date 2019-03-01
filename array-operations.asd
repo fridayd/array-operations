@@ -4,8 +4,8 @@
   :maintainer "Ben Dudson <http://github.com/bendudson>"
   :homepage "https://github.com/bendudson/array-operations"
   :license "MIT"
-  :depends-on (#:alexandria
-               #:optima)
+  :depends-on (:alexandria
+               :optima)
   :pathname "src/"
   :components ((:file "package")
                (:file "generic")
