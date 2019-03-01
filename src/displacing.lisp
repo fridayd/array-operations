@@ -14,7 +14,8 @@
            :combine
            :subvec
            :reshape
-           :reshape-col :reshape-row))
+           :reshape-col :reshape-row
+           :fill-in-dimensions))
 
 (in-package :array-operations/displacing)
 
