@@ -8,4 +8,4 @@
                  :array-operations/displacing
                  :array-operations/transforming
                  :array-operations/stacking))
-
+;; Note: array-operations/utilities *not* exported for external use.
