@@ -7,10 +7,10 @@
   :class :package-inferred-system
   :pathname "src/"
   :depends-on (:array-operations/all)
-  :in-order-to ((test-op (test-op :array-operations-tests)))
-  :perform (test-op (o c) (uiop:symbol-call :array-operations-tests :run)))
+  :in-order-to ((test-op (test-op :array-operations/tests)))
+  :perform (test-op (o c) (uiop:symbol-call :array-operations/tests :run)))
 
-(asdf:defsystem :array-operations-tests
+(asdf:defsystem :array-operations/tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :maintainer "Ben Dudson <http://github.com/bendudson>"
