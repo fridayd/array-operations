@@ -6,7 +6,9 @@
   :license "MIT"
   :class :package-inferred-system
   :pathname "src/"
-  :depends-on (:array-operations/all))
+  :depends-on (:array-operations/all)
+  :in-order-to ((test-op (test-op :array-operations-tests)))
+  :perform (test-op (o c) (uiop:symbol-call :array-operations-tests :run)))
 
 (asdf:defsystem :array-operations-tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
