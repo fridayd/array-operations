@@ -20,7 +20,6 @@
                (:file "stacking"     :depends-on ("generic" "displacing"))))
 
 (asdf:defsystem #:array-operations-tests
-  :serial t
   :description "Unit tests for the ARRAY-OPERATIONS library."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :maintainer "Ben Dudson <http://github.com/bendudson>"
