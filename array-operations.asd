@@ -1,4 +1,4 @@
-(asdf:defsystem #:array-operations
+(asdf:defsystem :array-operations
   :serial t
   :description "Simple array operations library for Common Lisp."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
@@ -7,7 +7,7 @@
   :license "MIT"
   :depends-on (#:alexandria
                #:optima)
-  :pathname #P"src/"
+  :pathname "src/"
   :components ((:file "package")
                (:file "generic")
                (:file "reducing")
@@ -19,13 +19,13 @@
                (:file "transforming" :depends-on ("generic" "utilities" "displacing"))
                (:file "stacking"     :depends-on ("generic" "displacing"))))
 
-(asdf:defsystem #:array-operations-tests
+(asdf:defsystem :array-operations-tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :maintainer "Ben Dudson <http://github.com/bendudson>"
   :homepage "https://github.com/bendudson/array-operations"
   :license "MIT"
-  :depends-on (#:array-operations       ; loads everything else
-               #:clunit)
-  :pathname #P"tests/"
+  :depends-on (:array-operations       ; loads everything else
+               :clunit)
+  :pathname "tests/"
   :components ((:file "tests")))
