@@ -17,7 +17,9 @@
                (:file "indexing"     :depends-on ("generic" "utilities"))
                (:file "displacing"   :depends-on ("generic" "utilities"))
                (:file "transforming" :depends-on ("generic" "utilities" "displacing"))
-               (:file "stacking"     :depends-on ("generic" "displacing"))))
+               (:file "stacking"     :depends-on ("generic" "displacing")))
+  :in-order-to ((test-op (load-op :array-operations/tests)))
+  :perform (test-op (o c) (uiop:symbol-call :array-operations/tests :run)))
 
 (asdf:defsystem :array-operations/tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
