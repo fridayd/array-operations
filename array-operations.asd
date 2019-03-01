@@ -19,7 +19,7 @@
                (:file "transforming" :depends-on ("generic" "utilities" "displacing"))
                (:file "stacking"     :depends-on ("generic" "displacing"))))
 
-(asdf:defsystem :array-operations-tests
+(asdf:defsystem :array-operations/tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :maintainer "Ben Dudson <http://github.com/bendudson>"
