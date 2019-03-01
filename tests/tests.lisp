@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (cl:defpackage #:array-operations/tests
   (:use #:cl #:alexandria #:clunit)
   (:export #:run))

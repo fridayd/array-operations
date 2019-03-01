@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (defpackage :array-operations/stacking
   (:use :cl :array-operations/generic
             :array-operations/utilities

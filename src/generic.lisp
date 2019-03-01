@@ -1,5 +1,3 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 (defpackage :array-operations/generic
   (:use :cl)
   (:export :as-array
