@@ -6,8 +6,11 @@
                 :with-unique-names)
   (:export :walk-subscripts
            :walk-subscripts-list
+           :same-dimensions-p
            :ensure-dimensions
-           :nested-loop))
+           :nested-loop
+           :product
+           :multf))
 
 (in-package :array-operations/utilities)
 
