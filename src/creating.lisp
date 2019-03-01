@@ -4,10 +4,8 @@
 ;;;
 
 (defpackage :array-operations/creating
-  (:use :cl
-        :array-operations/generic)
-  (:import-from :array-operations/utilities
-                :ensure-dimensions)
+  (:use :cl :array-operations/generic
+            :array-operations/utilities)
   (:export :fill!
            :zeros    :zeros*    :zeros!
            :ones     :ones*     :ones!
