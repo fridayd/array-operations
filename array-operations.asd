@@ -1,5 +1,4 @@
 (asdf:defsystem :array-operations
-  :serial t
   :description "Simple array operations library for Common Lisp."
   :author "Tamas K. Papp <tkpapp@gmail.com>"
   :maintainer "Ben Dudson <http://github.com/bendudson>"
