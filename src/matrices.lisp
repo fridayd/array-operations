@@ -32,5 +32,5 @@
          (= (first dims) (second dims)))))
 
 ;; Aliases for deprecated names 'matrix?' and 'square-matrix?'
-(setf (definition 'matrix?) #'matrixp)
-(setf (definition 'square-matrix?) #'square-matrix-p)
+(setf (fdefinition 'matrix?) #'matrixp)
+(setf (fdefinition 'square-matrix?) #'square-matrix-p)
