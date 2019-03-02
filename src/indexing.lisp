@@ -1,3 +1,5 @@
+;;;; Macros for operating over indexes of arrays
+
 (defpackage :array-operations/indexing
   (:use :cl :array-operations/generic
             :array-operations/utilities)
@@ -9,6 +11,7 @@
 
 (in-package :array-operations/indexing)
 
+;; Helper function for the following macros
 (defun find-array-dimensions (expr)
   "Walks an expression tree EXPR, finds AREF and ROW-MAJOR-AREF, SVREF or ELT calls.
    Returns a list of (symbol, expr) where EXPR is an expression which
@@ -268,10 +271,6 @@
   "
   `(each-index* t ,index ,@body))
 
-
-
-
-;;;
 
 (defmacro sum-index (index &body body)
   "Sums over one or more INDEX symbols in an array expression.

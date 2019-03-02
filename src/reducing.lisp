@@ -1,3 +1,5 @@
+;;;; Functions for reducing arrays.
+
 (defpackage :array-operations/reducing
   (:use :cl)
   (:export :most

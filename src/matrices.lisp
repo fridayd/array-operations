@@ -1,3 +1,5 @@
+;;;; Functions for representing matrices as 2D arrays.
+
 (defpackage :array-operations/matrices
   (:use :cl :array-operations/generic)
   (:import-from :alexandria
@@ -10,8 +12,6 @@
            :square-matrix?))
 
 (in-package :array-operations/matrices)
-
-;;; representing matrices as 2D arrays
 
 (deftype array-matrix ()
   "A rank-2 array."

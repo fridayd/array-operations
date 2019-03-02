@@ -1,3 +1,5 @@
+;;;; Utility functions, meant for internal use by this library.
+
 (defpackage :array-operations/utilities
   (:use :cl :array-operations/generic)
   (:import-from :alexandria
@@ -11,8 +13,6 @@
            :multf))
 
 (in-package :array-operations/utilities)
-
-;;; utilities used internally, not exported
 
 (defun product (dimensions)
   "Product of elements in the argument.  NOT EXPORTED."
