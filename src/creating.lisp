@@ -1,4 +1,4 @@
-;;; Routines for creating arrays
+;;; Functions for creating arrays
 ;;;
 
 (defpackage :array-operations/creating

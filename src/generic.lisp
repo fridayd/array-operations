@@ -1,3 +1,8 @@
+;;;; Generic functions for elementary array operations, with methods on 'array.
+;;;;
+;;;; Used abundantly in this library.
+;;;; Invites new methods to enable treating other data structures as arrays.
+
 (defpackage :array-operations/generic
   (:use :cl)
   (:export :as-array

@@ -1,3 +1,5 @@
+;;;; Functions for transforming arrays in various ways.
+
 (defpackage :array-operations/transforming
   (:use :cl :array-operations/generic
             :array-operations/utilities

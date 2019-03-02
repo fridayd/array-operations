@@ -1,3 +1,12 @@
+;;;; Functions for composing arrays into new arrays, by "stacking".
+;;;;
+;;;; One may think of stacking blocks as the guiding metaphor.
+;;;;
+;;;; For example, stack two row vectors to yield a 2x2 matrix:
+;;;;
+;;;; (stack-rows #(1 2) #(3 4)) -> #2A((1 2)
+;;;;                                   (3 4))
+
 (defpackage :array-operations/stacking
   (:use :cl :array-operations/generic
             :array-operations/utilities
