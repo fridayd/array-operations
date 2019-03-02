@@ -1,9 +1,7 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
 ;;; Routines for creating arrays
 ;;;
 
-(in-package #:array-operations)
+(in-package :array-operations)
 
 (defun fill! (array value)
   "Fills a given ARRAY with VALUE, coerced to the same element type as ARRAY"

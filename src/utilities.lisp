@@ -1,6 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
-(in-package #:array-operations)
+(in-package :array-operations)
 
 ;;; utilities used internally, not exported
 

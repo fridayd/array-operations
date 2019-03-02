@@ -1,6 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
-(in-package #:array-operations)
+(in-package :array-operations)
 
 (defun copy-row-major-block (source-array destination-array element-type
                              &key (source-start 0)
