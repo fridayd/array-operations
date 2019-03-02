@@ -1,8 +1,8 @@
-(cl:defpackage #:array-operations/tests
-  (:use #:cl #:alexandria #:clunit)
-  (:export #:run))
+(cl:defpackage :array-operations/tests
+  (:use :cl :alexandria :clunit)
+  (:export :run))
 
-(cl:in-package #:array-operations/tests)
+(cl:in-package :array-operations/tests)
 
 (defsuite tests ())
 (defsuite creation (tests))
