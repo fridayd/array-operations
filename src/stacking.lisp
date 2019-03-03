@@ -17,8 +17,6 @@
                 :permute)
   (:import-from :alexandria
                 :curry)
-  (:import-from :optima
-                :ematch)
   (:export :copy-row-major-block
            :stack-rows-copy :stack-rows* :stack-rows
            :stack-cols-copy :stack-cols* :stack-cols
