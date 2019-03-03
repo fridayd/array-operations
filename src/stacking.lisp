@@ -109,20 +109,20 @@ All objects have a fallback method, defined using AS-ARRAY.  The only reason for
   (:method (source destination element-type start-col)
     (stack-cols-copy (as-array source) destination element-type start-col))
   (:method ((source array) destination element-type start-col)
-    (ematch (dims source)
-      ((list _)
-       (loop for row below (nrow destination)
-             do (setf (aref destination row start-col)
-                      (coerce (aref source row) element-type))))
-      ((list _ ncol)
-       (loop for row below (nrow destination)
-             for source-start by ncol
-             do (copy-row-major-block source destination element-type
-                                      :source-start source-start
-                                      :source-end (+ source-start ncol)
-                                      :destination-start (array-row-major-index
-                                                          destination
-                                                          row start-col)))))))
+    (let ((dims (dims source)))
+      (ecase (length dims)
+        (1 (loop for row below (nrow destination)
+                 do (setf (aref destination row start-col)
+                          (coerce (aref source row) element-type))))
+        (2 (let ((ncol (second dims)))
+             (loop for row below (nrow destination)
+                   for source-start by (second (dims source))
+                   do (copy-row-major-block source destination element-type
+                                            :source-start source-start
+                                            :source-end (+ source-start (second dims))
+                                            :destination-start (array-row-major-index
+                                                                destination
+                                                                row start-col)))))))))
 
 (defun stack-cols* (element-type &rest objects)
   "Stack OBJECTS column-wise into an array of the given ELEMENT-TYPE, coercing if necessary.  Always return a simple array of rank 2.
