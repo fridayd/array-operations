@@ -145,12 +145,12 @@ When applicable, compatibility of dimensions is checked, and the result is used 
              (start-cols-and-dims (mapcar
                                    (lambda (object)
                                      (let* ((dims (dims object))
-                                            (increment (ematch dims
-                                                         (nil 1)
-                                                         ((list d0) (check-nrow d0)
-                                                          1)
-                                                         ((list d0 d1) (check-nrow d0)
-                                                          d1))))
+                                            (increment (ecase (length dims)
+                                                         (0 1)
+                                                         (1 (check-nrow (first dims))
+                                                            1)
+                                                         (2 (check-nrow (first dims))
+                                                            (second dims)))))
                                        (prog1 (cons ncol dims)
                                          (incf ncol increment))))
                                    objects))
