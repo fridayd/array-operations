@@ -7,8 +7,7 @@
   :class :package-inferred-system
   :pathname "src/"
   :depends-on (:array-operations/all)
-  :in-order-to ((test-op (test-op :array-operations/tests)))
-  :perform (test-op (o c) (uiop:symbol-call :array-operations/tests :run)))
+  :in-order-to ((test-op (test-op :array-operations/tests))))
 
 (asdf:defsystem :array-operations/tests
   :description "Unit tests for the ARRAY-OPERATIONS library."
@@ -20,4 +19,5 @@
                :alexandria
                :clunit)
   :pathname "tests/"
-  :components ((:file "tests")))
+  :components ((:file "tests"))
+  :perform (test-op (o c) (uiop:symbol-call :array-operations/tests :run)))
