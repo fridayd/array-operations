@@ -8,7 +8,7 @@ env:
   matrix:
     #- LISP=abcl
     #- LISP=allegro
-    - LISP=sbcl
+    - LISP=sbcl COVERALLS=true
     - LISP=ccl
     - LISP=clisp
     #- LISP=ecl
@@ -18,13 +18,16 @@ matrix:
     - env: LISP=clisp
 
 install:
-  - ./install.sh
-  #- curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
+  #- ./install.sh
+  - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash  
+  - git clone https://github.com/tgutu/clunit.git ~/lisp/clunit
+  - git clone https://github.com/fukamachi/cl-coveralls ~/lisp/cl-coveralls
     
 script:
-  - cl -e "(ql:quickload :array-operations)
-           (ql:quickload :array-operations/tests)
-           (let ((report (array-operations/tests:run)))
-             (when (plusp (slot-value report 'clunit::failed))
-               (princ report)
-               (uiop:quit 1)))"
+  - cl -l clunit -l cl-coveralls
+       -l array-operations -l 'array-operations/tests'
+       -e '(coveralls:with-coveralls (:exclude (list "tests"))
+             (let ((report (array-operations/tests:run)))
+               (when (plusp (slot-value report (quote clunit::failed)))
+                 (princ report)
+                 (uiop:quit 1))))'
