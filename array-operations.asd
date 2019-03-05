@@ -21,3 +21,11 @@
   :pathname "tests/"
   :components ((:file "tests"))
   :perform (test-op (o c) (uiop:symbol-call :array-operations/tests :run)))
+
+(asdf:defsystem :array-operations/coverage
+  :author "Dietrich Friday <friday.dietrich@gmail.com>"
+  :maintainer "Ben Dudson <http://github.com/bendudson>"
+  :homepage "https://github.com/bendudson/array-operations"
+  :license "MIT"
+  :defsystem-depends-on (:feature :sbcl (:require :sb-cover))
+  :components ((:file "coverage")))
