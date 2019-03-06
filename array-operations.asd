@@ -7,8 +7,7 @@
   :maintainer "Ben Dudson <http://github.com/bendudson>"
   :homepage "https://github.com/bendudson/array-operations"
   :license "MIT"
-  :depends-on (#:alexandria
-               #:optima)
+  :depends-on (#:alexandria)
   :pathname #P"src/"
   :components ((:file "package")
                (:file "creating")
