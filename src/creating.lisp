@@ -1,6 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
-
-;;; Routines for creating arrays
+;;; Functions for creating arrays
 ;;;
 
 (defpackage :array-operations/creating

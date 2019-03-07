@@ -1,4 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
+;;;; Functions for representing matrices as 2D arrays.
 
 (defpackage :array-operations/matrices
   (:use :cl :array-operations/generic)
@@ -12,8 +12,6 @@
            :square-matrix?))
 
 (in-package :array-operations/matrices)
-
-;;; representing matrices as 2D arrays
 
 (deftype array-matrix ()
   "A rank-2 array."

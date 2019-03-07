@@ -1,4 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
+;;;; Functions for reducing arrays.
 
 (defpackage :array-operations/reducing
   (:use :cl)

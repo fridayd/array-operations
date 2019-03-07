@@ -1,4 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
+;;;; Functions that return arrays displaced in various ways from another array.
 
 (defpackage :array-operations/displacing
   (:use :cl :array-operations/generic
@@ -18,8 +18,6 @@
            :fill-in-dimensions))
 
 (in-package :array-operations/displacing)
-
-;;; displacement and flattening
 
 (defun displace (array dimensions &optional (offset 0))
   "Shorthand function for displacing an array."

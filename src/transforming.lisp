@@ -1,4 +1,4 @@
-;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
+;;;; Functions for transforming arrays in various ways.
 
 (defpackage :array-operations/transforming
   (:use :cl :array-operations/generic
