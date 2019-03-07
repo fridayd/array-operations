@@ -80,14 +80,14 @@ displacing, may share structure."
   "Copy SOURCE into TARGET, for array arguments of compatible
 dimensions (checked).  Return TARGET, making the implementation of the
 semantics of SETF easy."
-  (assert (same-dimensions? target source))
+  (assert (same-dimensions-p target source))
   (replace (flatten target) (flatten source))
   target)
 
 (defun (setf sub) (value array &rest subscripts)
-  (multiple-value-bind (subarray atom?)
+  (multiple-value-bind (subarray atomp)
       (apply #'sub array subscripts)
-    (if atom?
+    (if atomp
         (setf (apply #'aref array subscripts) value)
         (copy-into subarray value))))
 
@@ -147,11 +147,11 @@ array)."
     (etypecase it
       ((integer 0) (assert (= size it)) (list it))
       (array (assert (= size (size it))) (dims it))
-      (list (flet ((missing? (dimension) (eq dimension t)))
+      (list (flet ((missingp (dimension) (eq dimension t)))
               (let ((missing)
                     (product 1))
                 (loop for dimension in dimensions
-                      do (if (missing? dimension)
+                      do (if (missingp dimension)
                              (progn
                                (assert (not missing) ()
                                        "More than one missing dimension.")
@@ -165,7 +165,7 @@ array)."
                       (assert (zerop remainder) ()
                               "Substitution does not result in an integer ~ dimension.")
                       (mapcar (lambda (dimension)
-                                (if (missing? dimension) fraction dimension))
+                                (if (missingp dimension) fraction dimension))
                               dimensions))
                     (progn
                       (assert (= size product))

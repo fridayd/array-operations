@@ -39,10 +39,10 @@ for invalid and repeated indices.  NOT EXPORTED."
     result))
 
 (defun check-permutation (permutation
-                          &optional (rank (length permutation) rank?))
+                          &optional (rank (length permutation) rank-supplied-p))
   "Check if PERMUTATION is a valid permutation (of the given RANK), and signal
 an error if necessary."
-  (when rank?
+  (when rank-supplied-p
     (assert (= rank (length permutation)) ()
             'permutation-incompatible-rank ))
   (assert (every #'plusp (permutation-flags permutation)) ()
@@ -74,8 +74,8 @@ single element."
             result)
           'list))
 
-(defun identity-permutation? (permutation
-                              &optional (rank (length permutation)))
+(defun identity-permutation-p (permutation
+                               &optional (rank (length permutation)))
   "Test if PERMUTATION is the identity permutation, ie a sequence of
 consecutive integers starting at 0.  Note that permutation is otherwise not
 checked, ie it may not be a permutation."
@@ -88,6 +88,9 @@ checked, ie it may not be a permutation."
       permutation)
      (= index rank))))
 
+;; Alias to deprecated name for identity-permutation-p
+(setf (fdefinition 'identity-permutation?) #'identity-permutation-p)
+
 (defun permute (permutation array)
   "Return ARRAY with the axes permuted by PERMUTATION, which is a sequence of
 indexes.  Specifically, an array A is transformed to B, where
@@ -98,7 +101,7 @@ P is the permutation.
 
 Array element type is preserved."
   (let ((rank (array-rank array)))
-    (if (identity-permutation? permutation rank)
+    (if (identity-permutation-p permutation rank)
         array
         (let ((dimensions (array-dimensions array)))
           (flet ((map-subscripts (subscripts-vector)
@@ -118,7 +121,7 @@ Array element type is preserved."
   "Apply function to the array arguments elementwise, and return the result as
 an array with the given ELEMENT-TYPE.  Arguments are checked for dimension
 compatibility."
-  (assert (apply #'same-dimensions? array other-arrays))
+  (assert (apply #'same-dimensions-p array other-arrays))
   (let ((result (make-array (array-dimensions array)
                             :element-type element-type)))
     (apply #'map-into (flatten result) function

@@ -39,6 +39,9 @@
    #:nrow
    #:ncol
    #:array-matrix
+   #:matrixp
+   #:square-matrix-p
+   ;; These next two are deprecated aliases for the previous two.
    #:matrix?
    #:square-matrix?)
   (:export ; displacement
@@ -64,7 +67,8 @@
    #:complement-permutation
    #:complete-permutation
    #:invert-permutation
-   #:identity-permutation?
+   #:identity-permutation-p
+   #:identity-permutation? ; deprecated alias for above
    #:permute
    #:each*
    #:each

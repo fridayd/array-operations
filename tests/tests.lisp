@@ -15,9 +15,9 @@
 (defsuite indexing (tests))
 (defsuite stack (tests))
 
-(defun run (&optional interactive?)
+(defun run (&optional interactivep)
   "Run all the tests for array-operations."
-  (run-suite 'tests :use-debugger interactive?))
+  (run-suite 'tests :use-debugger interactivep))
 
 ;;; creation
 
