@@ -17,8 +17,6 @@
                 :permute)
   (:import-from :alexandria
                 :curry)
-  (:import-from :optima
-                :ematch)
   (:export :copy-row-major-block
            :stack-rows-copy :stack-rows* :stack-rows
            :stack-cols-copy :stack-cols* :stack-cols
@@ -75,12 +73,12 @@ When applicable, compatibility of dimensions is checked, and the result is used 
              (start-rows-and-dims (mapcar
                                    (lambda (object)
                                      (let* ((dims (dims object))
-                                            (increment (ematch dims
-                                                         (nil 1)
-                                                         ((list d0) (check-ncol d0)
-                                                          1)
-                                                         ((list d0 d1) (check-ncol d1)
-                                                          d0))))
+                                            (increment (ecase (length dims)
+                                                         (0 1)
+                                                         (1 (check-ncol (first dims))
+                                                            1)
+                                                         (2 (check-ncol (second dims))
+                                                            (first dims)))))
                                        (prog1 (cons nrow dims)
                                          (incf nrow increment))))
                                    objects))
@@ -109,20 +107,20 @@ All objects have a fallback method, defined using AS-ARRAY.  The only reason for
   (:method (source destination element-type start-col)
     (stack-cols-copy (as-array source) destination element-type start-col))
   (:method ((source array) destination element-type start-col)
-    (ematch (dims source)
-      ((list _)
-       (loop for row below (nrow destination)
-             do (setf (aref destination row start-col)
-                      (coerce (aref source row) element-type))))
-      ((list _ ncol)
-       (loop for row below (nrow destination)
-             for source-start by ncol
-             do (copy-row-major-block source destination element-type
-                                      :source-start source-start
-                                      :source-end (+ source-start ncol)
-                                      :destination-start (array-row-major-index
-                                                          destination
-                                                          row start-col)))))))
+    (let ((dims (dims source)))
+      (ecase (length dims)
+        (1 (loop for row below (nrow destination)
+                 do (setf (aref destination row start-col)
+                          (coerce (aref source row) element-type))))
+        (2 (let ((ncol (second dims)))
+             (loop for row below (nrow destination)
+                   for source-start by (second (dims source))
+                   do (copy-row-major-block source destination element-type
+                                            :source-start source-start
+                                            :source-end (+ source-start (second dims))
+                                            :destination-start (array-row-major-index
+                                                                destination
+                                                                row start-col)))))))))
 
 (defun stack-cols* (element-type &rest objects)
   "Stack OBJECTS column-wise into an array of the given ELEMENT-TYPE, coercing if necessary.  Always return a simple array of rank 2.
@@ -145,12 +143,12 @@ When applicable, compatibility of dimensions is checked, and the result is used 
              (start-cols-and-dims (mapcar
                                    (lambda (object)
                                      (let* ((dims (dims object))
-                                            (increment (ematch dims
-                                                         (nil 1)
-                                                         ((list d0) (check-nrow d0)
-                                                          1)
-                                                         ((list d0 d1) (check-nrow d0)
-                                                          d1))))
+                                            (increment (ecase (length dims)
+                                                         (0 1)
+                                                         (1 (check-nrow (first dims))
+                                                            1)
+                                                         (2 (check-nrow (first dims))
+                                                            (second dims)))))
                                        (prog1 (cons ncol dims)
                                          (incf ncol increment))))
                                    objects))
