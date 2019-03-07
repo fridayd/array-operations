@@ -1,9 +1,15 @@
 ;;;; package.lisp
 
 (defpackage #:array-operations
-  (:use #:cl
-        #:alexandria
-        #:optima)
+  (:use #:cl)
+  (:import-from #:alexandria
+                #:compose
+                #:curry
+                #:ensure-list
+                #:length=
+                #:with-unique-names)
+  (:import-from #:optima
+                #:ematch)
   (:nicknames #:aops)
   (:shadow #:flatten)
   (:export ; creation
@@ -63,7 +69,6 @@
    #:permutation-repeated-index
    #:permutation-invalid-index
    #:permutation-incompatible-rank
-   #:valid-permutation?
    #:complement-permutation
    #:complete-permutation
    #:invert-permutation
