@@ -62,6 +62,26 @@ for invalid and repeated indices.  NOT EXPORTED."
          permutation)
     result))
 
+(defun identity-permutation (rank)
+  "Return an identity permutation for an array of rank RANK.
+An identity permutation is a list of consecutive integers, from 0 to (1- RANK)."
+  (assert (>= 0 rank))
+  (loop for i below rank
+        collect i))
+
+(defun identity-permutation-p (permutation &optional (rank (length permutation)))
+  "Test if PERMUTATION is the identity permutation (see IDENTITY-PERMUTATION.)
+Note that PERMUTATION is otherwise not checked--it may not be a permutation."
+  (equal permutation
+         (indentiy-permutation rank)))
+
+;; Alias to deprecated name for identity-permutation-p
+(setf (fdefinition 'identity-permutation?) #'identity-permutation-p)
+
+(defun valid-permutation-p (permutation &optional (rank (length permutation)))
+  (eq (indentity-permutation rank)
+      (sort permutation #'<)))
+
 (defun check-permutation (permutation
                           &optional (rank (length permutation) rank-supplied-p))
   "Check if PERMUTATION is a valid permutation (of the given RANK), and signal
@@ -97,23 +117,6 @@ single element."
                  permutation)
             result)
           'list))
-
-(defun identity-permutation-p (permutation
-                               &optional (rank (length permutation)))
-  "Test if PERMUTATION is the identity permutation, ie a sequence of
-consecutive integers starting at 0.  Note that permutation is otherwise not
-checked, ie it may not be a permutation."
-  (let ((index 0))
-    (and
-     (every
-      (lambda (p)
-        (prog1 (= index p)
-          (incf index)))
-      permutation)
-     (= index rank))))
-
-;; Alias to deprecated name for identity-permutation-p
-(setf (fdefinition 'identity-permutation?) #'identity-permutation-p)
 
 (defun permute (permutation array)
   "Return ARRAY with the axes permuted by PERMUTATION, which is a sequence of
