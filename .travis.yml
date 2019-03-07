@@ -18,8 +18,8 @@ matrix:
     - env: LISP=clisp
 
 install:
-  - ./install.sh
-  #- curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh  
+  #- ./install.sh
+  - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash  
     
 script:
   - cl -e "(ql:quickload :array-operations)
