@@ -18,7 +18,7 @@
   (:import-from :alexandria
                 :curry)
   (:export :copy-row-major-block
-           :stack-rows-copy :stack-rows* :stack-rows
+           :stack-rows* :stack-rows
            :stack-cols-copy :stack-cols* :stack-cols
            :stack* :stack))
 
