@@ -1,29 +1,10 @@
-;;; helpers
-;; - displaced arrays
-;; - flatten
-;; - replace
+;;;; Scratch work for 'better' stacking functions.
+;;;; By 'better', I mean more readable, and maybe more performant.
 
-;;; algo
-;; - checks
-;; - make result, flat-result
-;; - loop over arguments
-;; -- case
-;; --- (fill flat-result arg :start x :end y)
-;; --- (replace flat-result (flatten arg) :start1 x :end1 y)
+;; TODO: Think about organization and naming.
+;; Some of the existing code seems to assume a domain of matrices, vectors, etc.
 
-;; Note: Change #'dim to report scalars as 0 in the 0th dimension
-;;       Would let me...?
-
-(defun dim* (object n)
-  "Return Nth dimension of array or scalar. Scalars always return 1."
-  (etypecase object
-    (array (dim object n))
-    (number 1)))
-
-
-;; TODO: Move #'rows and #'cols to "matrices.lisp"
-;; TODO: ...and then, perhaps, 2D stacking goes there also?
-; >2D generalization: (_ (dim object (1- _)))
+;; TODO: Generalize, or expand, some of these to tensors of rank > 2?
 
 ;; or call this 'height'?
 (defun rows (object)
@@ -43,7 +24,6 @@
              (2 (dim object 1))))
     (number 1)))
 
-;; TODO: Extend/generalize to tensors of rank >2?
 (defun stack-rows* (element-type &rest objects)
   "Stack OBJECTS, row-wise, into a simple 2D array of given ELEMENT-TYPE.
 
@@ -53,8 +33,8 @@
   (let* ((array-objects (remove-if-not #'arrayp objects))
          (array-objects-cols (mapcar #'cols array-objects)))
     (when array-objects
-      ;; FIXME: add message to this assert
-      (assert (apply #'= array-objects-cols))) ; Any arrays should be = width.
+      (assert (apply #'= array-objects-cols) nil
+              "All ARRAY-type arguments must have the same width"))
     (let* ((height (reduce #'+ (mapcar #'rows objects)))
            (width (or (first array-objects-cols) 1)) ; 1 when only scalars.
            (result (make-array (list height width)
