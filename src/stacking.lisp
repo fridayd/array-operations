@@ -40,17 +40,23 @@ This function should be used to implement copying of contiguous row-major blocks
                     source))))
   (values))
 
-(defgeneric stack-rows-copy (source destination element-type start-row)
-  (:documentation "Method used to implement the copying of objects in STACK-ROW*, by copying the elements of SOURCE to DESTINATION, starting with the row index START-ROW in the latter.  Elements are coerced to ELEMENT-TYPE.
+;; TODO: Are these the best names for this and 'cols', following)?
+(defun rows (object)
+  "Return the number of rows of an array or scalar. Scalars return 1."
+  (etypecase object
+    (array (ecase (rank object)
+             (1 1)
+             (2 (dim object 0))))
+    (number 1)))
 
-This method is only called when (DIMS SOURCE) was non-nil.  It is assumed that it onlychanges elements in DESTINATION which are supposed to be copies of SOURCE.  DESTINATION is always a matrix with element-type upgraded from ELEMENT-TYPE, and its NCOL should match the relevant dimension of SOURCE.
-
-All objects have a fallback method, defined using AS-ARRAY.  The only reason for definining a method is efficiency.")
-  (:method (source destination element-type start-row)
-    (stack-rows-copy (as-array source) destination element-type start-row))
-  (:method ((source array) destination element-type start-row)
-    (copy-row-major-block source destination element-type
-                          :destination-start (* start-row (ncol destination)))))
+;; TODO: Are these the best names for this and 'rows', previous)?
+(defun cols (object)
+  "Return the number of columns of an array or scalar. Scalars return 1."
+  (etypecase object
+    (array (ecase (rank object)
+             (1 (dim object 0))
+             (2 (dim object 1))))
+    (number 1)))
 
 (defun stack-rows* (element-type &rest objects)
   "Stack OBJECTS, row-wise, into a simple 2D array of given ELEMENT-TYPE.
