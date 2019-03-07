@@ -1,6 +1,30 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/transforming
+  (:use :cl :array-operations/generic
+            :array-operations/utilities
+            :array-operations/displacing)
+  (:import-from :alexandria
+                :compose
+                :curry
+                :ensure-list)
+  (:export :coercing
+           :each*      :each
+           :margin*    :margin
+           :outer*     :outer
+           :vectorize* :vectorize :vectorize!
+           :invert-permutation
+           :complete-permutation
+           :complement-permutation
+           :identity-permutation-p
+           :identity-permutation? ; deprecated alias for above
+           :permutation-invalid-index
+           :permutation-repeated-index
+           :permutation-incompatible-rank
+           :permute
+           :recycle))
+
+(in-package :array-operations/transforming)
 
 ;;; coercing can be used with * forms
 

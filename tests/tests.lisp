@@ -1,10 +1,10 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(cl:defpackage #:array-operations-tests
+(cl:defpackage #:array-operations/tests
   (:use #:cl #:alexandria #:clunit)
   (:export #:run))
 
-(cl:in-package #:array-operations-tests)
+(cl:in-package #:array-operations/tests)
 
 (defsuite tests ())
 (defsuite creation (tests))
@@ -186,7 +186,7 @@
 
 (deftest walk-subscripts (utilities)
   (let (result)
-    (aops:walk-subscripts ('(2 3) subscripts position)
+    (array-operations/utilities::walk-subscripts ('(2 3) subscripts position)
       (push (cons position (copy-seq subscripts)) result))
     (assert-equalp '((0 . #(0 0))
                      (1 . #(0 1))
@@ -198,7 +198,7 @@
 
 (deftest nested-loop (utilities)
   (let (result)
-    (aops:nested-loop (i j) '(2 3)
+    (array-operations/utilities::nested-loop (i j) '(2 3)
       (push (list i j) result))
     (assert-equalp '((0 0)
                      (0 1)
@@ -211,7 +211,7 @@
   ; Test dimensions of local scope variable (no eval)
   (let ((a #(1 2 3 4))
         result)
-    (aops:nested-loop (i) (array-dimensions a)
+    (array-operations/utilities::nested-loop (i) (array-dimensions a)
       (push i result))
     (assert-equalp '(0 1 2 3) (reverse result))))
 
@@ -298,13 +298,13 @@
              (apply subscripts-mapping subscripts)))
       (let ((result (make-array (map% dimensions)
                                 :element-type (array-element-type array))))
-        (aops:walk-subscripts-list (dimensions subscripts)
+        (array-operations/utilities::walk-subscripts-list (dimensions subscripts)
           (setf (apply #'aref result (map% subscripts))
                 (apply #'aref array subscripts)))
         result))))
 
 (deftest permutations (transformations)
-  (assert-equalp #*10110 (aops::permutation-flags '(0 3 2) 5))
+  (assert-equalp #*10110 (array-operations/transforming::permutation-flags '(0 3 2) 5))
   (assert-condition error (aops::check-permutation '(0 1 1)))
   (assert-equalp '(0 1 4) (aops:complement-permutation '(3 2) 5))
   (assert-equalp '(3 2 0 1 4) (aops:complete-permutation '(3 2) 5))

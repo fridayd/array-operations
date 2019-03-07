@@ -1,6 +1,23 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/stacking
+  (:use :cl :array-operations/generic
+            :array-operations/utilities
+            :array-operations/displacing)
+  (:import-from :array-operations/transforming
+                :complete-permutation
+                :invert-permutation
+                :permute)
+  (:import-from :alexandria
+                :curry)
+  (:import-from :optima
+                :ematch)
+  (:export :copy-row-major-block
+           :stack-rows-copy :stack-rows* :stack-rows
+           :stack-cols-copy :stack-cols* :stack-cols
+           :stack* :stack))
+
+(in-package :array-operations/stacking)
 
 (defun copy-row-major-block (source-array destination-array element-type
                              &key (source-start 0)

@@ -1,6 +1,18 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-(in-package #:array-operations)
+(defpackage :array-operations/generic
+  (:use :cl)
+  (:export :as-array
+           :element-type
+           :dims
+           :size
+           :rank
+           :dim
+           :&dims
+           :nrow
+           :ncol))
+
+(in-package :array-operations/generic)
 
 ;;; shorthand functions
 ;;;

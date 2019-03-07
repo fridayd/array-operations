@@ -23,8 +23,8 @@ install:
     
 script:
   - cl -e "(ql:quickload :array-operations)
-           (ql:quickload :array-operations-tests)
-           (let ((report (array-operations-tests:run)))
+           (ql:quickload :array-operations/tests)
+           (let ((report (array-operations/tests:run)))
              (when (plusp (slot-value report 'clunit::failed))
                (princ report)
                (uiop:quit 1)))"
