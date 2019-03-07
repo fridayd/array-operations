@@ -6,7 +6,7 @@
 
 ;; TODO: Generalize, or expand, some of these to tensors of rank > 2?
 
-;; or call this 'height'?
+;; TODO: Are these the best names for this and 'cols', following)?
 (defun rows (object)
   "Return the number of rows of an array or scalar. Scalars return 1."
   (etypecase object
@@ -15,7 +15,7 @@
              (2 (dim object 0))))
     (number 1)))
 
-;; or call this 'width'?
+;; TODO: Are these the best names for this and 'rows', previous)?
 (defun cols (object)
   "Return the number of columns of an array or scalar. Scalars return 1."
   (etypecase object
