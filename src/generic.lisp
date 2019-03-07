@@ -86,18 +86,3 @@ When DIMS is not defined for an object, it falls back to as-array, which may be 
     (array-dimension array 1))
   (:method (array)
     (dim array 1)))
-
-(deftype array-matrix ()
-  "A rank-2 array."
-  '(array * (* *)))
-
-(declaim (inline matrix? square-matrix?))
-(defun matrix? (matrix)
-  "Test if MATRIX has rank 2."
-  (length= (dims matrix) 2))
-
-(defun square-matrix? (matrix)
-  "Test if MATRIX has two dimensions and that they are equal."
-  (let ((dims (dims matrix)))
-    (and (length= dims 2)
-         (= (first dims) (second dims)))))
